@@ -7,7 +7,14 @@ class BaseCommand(abc.ABC):
         self.__help_message = help_message
 
     @abc.abstractmethod
-    def run(self):
+    def run(self, **args):
+        """Abstract method for implementing command's logic.
+
+        Arguments:
+        **args -- optional arguments for command
+        Returned value:
+        True if command succeeded, else returns False
+        """
         pass
 
     @property
@@ -19,4 +26,4 @@ class BaseCommand(abc.ABC):
         return self.__help_message
 
     def __str__(self):
-        return 'Name: %s\nHelp: %s\n' % (self.name, self.help)
+        return 'Command \'%s\': %s\n' % (self.name, self.help)

@@ -5,6 +5,7 @@ class CommitCommand(BaseCommand):
     def __init__(self, name, help_message):
         super().__init__(name, help_message)
 
-    def run(self):
-        super().run()
-        # important stuff
+    def run(self, **args):
+        if not super().run():
+            return False
+        raise NotImplementedError()
