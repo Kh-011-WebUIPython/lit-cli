@@ -1,3 +1,4 @@
+import sys
 import argparse
 
 
@@ -22,7 +23,9 @@ def main():
 
     parser_log = subparsers.add_parser('log', help='log help')
 
-    print(parser.parse_args(['--help']))
+    parser_status = subparsers.add_parser('status', help='status help')
+
+    print(parser.parse_args(sys.argv[1:]))
 
 
 if __name__ == '__main__':
