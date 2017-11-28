@@ -1,11 +1,11 @@
 from peewee import *
 
-db = SqliteDatabase('lit.db')
+lit_db = SqliteDatabase('lit.db')
 
 
 class BaseModel(Model):
     class Meta:
-        database = db  # model uses database 'lit.db'
+        database = lit_db  # model uses database 'lit.db'
 
 
 class StagingArea(BaseModel):
@@ -34,10 +34,10 @@ class Head(BaseModel):
     last_commit = ForeignKeyField(Commit, null=True)
 
 
-def create_tables():
+def create_tables(db):
     db.connect()
     # db.drop_tables([StagingArea, Commit, Branch, CommitBranch, Head])
     db.create_tables([StagingArea, Commit, Branch, CommitBranch, Head])
 
 
-create_tables()
+create_tables(lit_db)
