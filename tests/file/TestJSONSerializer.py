@@ -20,17 +20,18 @@ class TestJSONSerializer(unittest.TestCase):
              'key15': 'value15',
              }
 
-    def _remove_test_file_if_exists(self):
+    @staticmethod
+    def __remove_test_file_if_exists():
         try:
             os.remove(TEST_JSON_FILE_PATH)
         except FileNotFoundError:
             pass
 
     def setUp(self):
-        self._remove_test_file_if_exists()
+        self.__remove_test_file_if_exists()
 
     def tearDown(self):
-        self._remove_test_file_if_exists()
+        self.__remove_test_file_if_exists()
 
     def test_append_item_to_new_file_success(self):
         serializer = JSONSerializer(TEST_JSON_FILE_PATH)
@@ -83,6 +84,7 @@ class TestJSONSerializer(unittest.TestCase):
             expected_value = 2
             actual_value = len(json_data)
             self.assertEqual(expected_value, actual_value)
+
 
 if __name__ == '__main__':
     unittest.main()
