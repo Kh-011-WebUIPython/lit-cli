@@ -3,7 +3,7 @@ LIT
 """
 from setuptools import find_packages, setup
 
-dependencies = ['peewee']
+dependencies = []
 
 setup(
     name='litvcs',
