@@ -1,5 +1,8 @@
 import sys
 import argparse
+import lit.command.InitCommand as initcomm
+
+FUNCTION_MAP = {'init' : initcomm.InitCommand.run}
 
 
 def main():
@@ -7,6 +10,7 @@ def main():
     subparsers = parser.add_subparsers()
 
     parser_init = subparsers.add_parser('init', help='init help')
+
 
     parser_add = subparsers.add_parser('add', help='add help')
     parser_add.add_argument('path', type=str, help='path help')
