@@ -2,7 +2,7 @@ import sys
 import argparse
 import lit.command.InitCommand as initcomm
 
-FUNCTION_MAP = {'init' : initcomm.InitCommand.run}
+a = initcomm.InitCommand('init', 'init lit directory')
 
 
 def main():
@@ -10,7 +10,8 @@ def main():
     subparsers = parser.add_subparsers()
 
     parser_init = subparsers.add_parser('init', help='init help')
-
+    parser_init.set_defaults(func = a.run)
+   # parser_init.add_argument('-init', action='store_const', const = a.run)
 
     parser_add = subparsers.add_parser('add', help='add help')
     parser_add.add_argument('path', type=str, help='path help')
@@ -29,7 +30,12 @@ def main():
 
     parser_status = subparsers.add_parser('status', help='status help')
 
-    print(parser.parse_args(sys.argv[1:]))
+    result = parser.parse_args(sys.argv[1:])
+    print(result)
+    try:
+        result.func()
+    except:
+        pass
 
 
 if __name__ == '__main__':
