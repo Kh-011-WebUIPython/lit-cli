@@ -7,7 +7,7 @@ class ISerializer(abc.ABC):
         self.__file_worker = FileWorker(file_path)
 
     @abc.abstractmethod
-    def append_item(self, item):
+    def append_to_list_item(self, key, new_item):
         pass
 
     @abc.abstractmethod

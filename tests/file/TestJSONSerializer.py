@@ -36,7 +36,7 @@ class TestJSONSerializer(unittest.TestCase):
     def test_append_item_to_new_file_success(self):
         serializer = JSONSerializer(TEST_JSON_FILE_PATH)
 
-        serializer.append_item(self.item1)
+        serializer.append_to_list_item(self.item1, )
         with open(TEST_JSON_FILE_PATH, 'r') as file_object:
             json_data = json.load(file_object)
             expected_string = '[' + str(self.item1) + ']'
@@ -46,10 +46,10 @@ class TestJSONSerializer(unittest.TestCase):
 
     def test_append_item_to_existing_file_success(self):
         serializer = JSONSerializer(TEST_JSON_FILE_PATH)
-        serializer.append_item(self.item1)
+        serializer.append_to_list_item(self.item1, )
 
         serializer = JSONSerializer(TEST_JSON_FILE_PATH)
-        serializer.append_item(self.item2)
+        serializer.append_to_list_item(self.item2, )
         with open(TEST_JSON_FILE_PATH, 'r') as file_object:
             json_data = json.load(file_object)
             expected_string = str(self.item2)
@@ -60,8 +60,8 @@ class TestJSONSerializer(unittest.TestCase):
     def test_read_all_items_success(self):
         serializer = JSONSerializer(TEST_JSON_FILE_PATH)
 
-        serializer.append_item(self.item1)
-        serializer.append_item(self.item2)
+        serializer.append_to_list_item(self.item1, )
+        serializer.append_to_list_item(self.item2, )
         with open(TEST_JSON_FILE_PATH, 'r') as file_object:
             json_data = json.load(file_object)
             expected_string = '[' + str(self.item1) + ', ' + str(self.item2) + ']'
@@ -71,14 +71,14 @@ class TestJSONSerializer(unittest.TestCase):
     def test_get_items_count(self):
         serializer = JSONSerializer(TEST_JSON_FILE_PATH)
 
-        serializer.append_item(self.item1)
+        serializer.append_to_list_item(self.item1, )
         with open(TEST_JSON_FILE_PATH, 'r') as file_object:
             json_data = json.load(file_object)
             expected_value = 1
             actual_value = len(json_data)
             self.assertEqual(expected_value, actual_value)
 
-        serializer.append_item(self.item2)
+        serializer.append_to_list_item(self.item2, )
         with open(TEST_JSON_FILE_PATH, 'r') as file_object:
             json_data = json.load(file_object)
             expected_value = 2

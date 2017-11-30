@@ -13,7 +13,7 @@ class CommitsHistoryManager():
 
     def write_commit_info(self, message, datetime=datetime.now()):
         commit_info = {'message': message, 'datetime': datetime}
-        self.serializer.append_item(commit_info)
+        self.serializer.append_to_list_item(commit_info, )
         raise NotImplementedError()
 
     def read_all_commits(self):
