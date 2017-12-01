@@ -3,6 +3,10 @@ import os
 import sys
 import json
 
+
+
+
+
 class AddCommand(BaseCommand):
 
     path = os.getcwd()
@@ -11,7 +15,18 @@ class AddCommand(BaseCommand):
         super().__init__(name, help_message)
 
     def run(self, *args):
-        self.get_file_list(sys.argv[2:])
+        print(self.get_file_list(sys.argv[2:]))
+        file_list = self.get_file_list(sys.argv[2:])
+        a = open('.lit/tracked_files.json', 'r')
+        tracked = json.load( a )
+        a.close()
+
+
+        b = open('.lit/tracked_files.json', 'w')
+        for file in file_list:
+            if file not in (tracked.keys() or tracked.values()):
+                json.dump(file,b )
+        b.close()
 
  #       if args in self.get_file_list() and args not in self.tracked_files:
  #           self.tracked_files.append(args)
