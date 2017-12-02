@@ -21,7 +21,7 @@ class InitCommand(BaseCommand):
                 outfile.write('{"files": []}')
                 pass
             with open(self.LIT + self.COMMIT_LOG, 'w') as outfile:
-                outfile.write('[]')
+                outfile.write('{"commits":[]}')
         else:
             print(self.LIT_INITED)
 #        if not super().run():

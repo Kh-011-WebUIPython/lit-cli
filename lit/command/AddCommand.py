@@ -11,16 +11,29 @@ class AddCommand(BaseCommand):
     def run(self, *args):
 
         file_list = self.get_file_list(sys.argv[2:])
+        if not file_list == None:
+            a = open('.lit/tracked_files.json', 'r')
+            tracked = json.load(a)
+            a.close()
+            self.save_tracked_files(file_list, tracked)
 
-        a = open('.lit/tracked_files.json', 'r')
-        tracked = json.load(a)
-        a.close()
+        else:
+            pass
 
-        self.save_tracked_files(file_list, tracked)
+
+
+
 
     def get_file_list(self, *args):
-        file_list = os.listdir(args[0][0])
-        return list(filter(lambda file: file[0] != '.', file_list))
+#        print(os.getcwd())
+#        print(os.path.realpath('.'))
+#        print(args[0][0])
+#
+#        if  args[0][0].split('/') not in os.getcwd().split('/'):
+#            print("not found .lit directory")
+#        else:
+            file_list = os.listdir(args[0][0])
+            return list(filter(lambda file: file[0] != '.', file_list))
 
     def save_tracked_files(self, file_list, tracked):
         b = open('.lit/tracked_files.json', 'w')

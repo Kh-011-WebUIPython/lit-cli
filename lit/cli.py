@@ -2,6 +2,8 @@ import sys
 import argparse
 import lit.command.InitCommand as incom
 import lit.command.AddCommand as addcom
+import lit.command.CommitCommand as comcom
+
 
 #sys.path.append("AddCommand", "BaseCommand", "CommitCommand", "DiffCommand",
 #                "InitCommand", "LogCommand", "RmCommand", "StatusCommand")
@@ -18,7 +20,7 @@ import lit.command.AddCommand as addcom
 
 init = incom.InitCommand('init', 'init lit directory')
 add = addcom.AddCommand('add', 'add files to tracked')
-
+commit = comcom.CommitCommand('commit','commit tracked files')
 
 
 def main():
@@ -39,6 +41,7 @@ def main():
 
     parser_commit = subparsers.add_parser('commit', help='commit help')
     parser_commit.add_argument('message', type=str, help='message help')
+    parser_commit.set_defaults(func = commit.run)
     #parser_commit.set_defaults(func=COMMANDS_INITIALIZE['commit'].run)
 
     parser_diff = subparsers.add_parser('diff', help='diff help')
