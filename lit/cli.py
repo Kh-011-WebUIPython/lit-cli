@@ -3,6 +3,7 @@ import argparse
 import lit.command.InitCommand as incom
 import lit.command.AddCommand as addcom
 import lit.command.CommitCommand as comcom
+import lit.command.LogCommand as logcom
 
 
 #sys.path.append("AddCommand", "BaseCommand", "CommitCommand", "DiffCommand",
@@ -21,6 +22,7 @@ import lit.command.CommitCommand as comcom
 init = incom.InitCommand('init', 'init lit directory')
 add = addcom.AddCommand('add', 'add files to tracked')
 commit = comcom.CommitCommand('commit','commit tracked files')
+log = logcom.LogCommand('log', 'show changes history')
 
 
 def main():
@@ -50,6 +52,7 @@ def main():
     #parser_diff.set_default(func=COMMANDS_INITIALIZE['diff'].run)
 
     parser_log = subparsers.add_parser('log', help='log help')
+    parser_log.set_defaults(func=log.run)
     #parser_log.add_defaults(func=COMMANDS_INITIALIZE['log'].run)
 
     parser_status = subparsers.add_parser('status', help='status help')
