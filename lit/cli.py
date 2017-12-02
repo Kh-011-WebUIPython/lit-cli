@@ -4,6 +4,7 @@ import lit.command.InitCommand as incom
 import lit.command.AddCommand as addcom
 import lit.command.CommitCommand as comcom
 import lit.command.LogCommand as logcom
+import lit.command.RmCommand as rmcom
 
 
 #sys.path.append("AddCommand", "BaseCommand", "CommitCommand", "DiffCommand",
@@ -23,7 +24,7 @@ init = incom.InitCommand('init', 'init lit directory')
 add = addcom.AddCommand('add', 'add files to tracked')
 commit = comcom.CommitCommand('commit','commit tracked files')
 log = logcom.LogCommand('log', 'show changes history')
-
+rm = rmcom.RmCommand('rm', 'delete selected file')
 
 def main():
     parser = argparse.ArgumentParser(prog='lit', description='LIT version control system')
@@ -39,6 +40,7 @@ def main():
 
     parser_rm = subparsers.add_parser('rm', help='rm help')
     parser_rm.add_argument('path', type=str, help='path help')
+    parser_rm.set_defaults(func =rm.run)
    # parser_rm.set_defaults(func=COMMANDS_INITIALIZE['rm'].run)
 
     parser_commit = subparsers.add_parser('commit', help='commit help')
