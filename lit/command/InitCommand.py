@@ -18,7 +18,7 @@ class InitCommand(BaseCommand):
             os.makedirs(self.LIT)
             os.makedirs(self.LIT + self.COMMIT_DIR)
             with open(self.LIT + self.TRACKED_FILE, 'w') as outfile:
-                outfile.write('{"files":[]}')
+                outfile.write('{"files": []}')
                 pass
             with open(self.LIT + self.COMMIT_LOG, 'w') as outfile:
                 outfile.write('[]')
