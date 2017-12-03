@@ -1,16 +1,13 @@
 class FileWorker():
     def __init__(self, file_path):
         self.__file_path = file_path
-        self.__file_object = open(self.__file_path, 'r+')
+        try:
+            __file_object = open(self.file_path, 'r')
+        except FileNotFoundError:
+            '''If file was not found, create an empty file'''
+            __file_object = open(self.file_path, 'w')
+        __file_object.close()
 
-    def __del__(self):
-        self.__file_object.close()
-
-    def __enter__(self):
-        return self.__file_object
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type != None or exc_val != None or exc_tb != None:
-            print('Exception happened:\n' + exc_type + '\n' + exc_val + '\n' + exc_tb)
-            return False
-        return True
+    @property
+    def file_path(self):
+        return self.__file_path
