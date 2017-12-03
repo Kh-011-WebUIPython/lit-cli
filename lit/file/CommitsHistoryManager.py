@@ -1,30 +1,48 @@
 from datetime import datetime
 from lit.file.ISerializer import ISerializer
+import lit.file.exception as exception
 
 
 class CommitsHistoryManager():
-    FILE_PATH = 'commits.json'
+    LIST_KEY = 'commits'
     DATETIME_FORMAT = '%Y-%m-%d_%H-%M-%S-%f'
 
-    def __init__(self, serializer):
-        if serializer is not ISerializer:
+    COMMIT_DATETIME_KEY = 'datetime'
+    COMMIT_MESSAGE_KEY = 'message'
+
+    @classmethod
+    def init(cls, serializer):
+        if not issubclass(type(serializer), ISerializer):
             raise TypeError('ISerializer implementations supported only')
-        self.__serializer = serializer
+        cls.__serializer = serializer
 
-    def write_commit_info(self, message, datetime=datetime.now()):
-        commit_info = {'message': message, 'datetime': datetime}
-        self.serializer.append_to_list_item(commit_info, )
-        raise NotImplementedError()
+    @classmethod
+    def write_commit_info(cls, message, date_time=datetime.now()):
+        date_time_str = date_time.strftime(cls.DATETIME_FORMAT)
+        commit_info = {cls.COMMIT_DATETIME_KEY: date_time_str, cls.COMMIT_MESSAGE_KEY: message}
+        try:
+            cls.__serializer.append_to_list_item(cls.LIST_KEY, commit_info)
+        except AttributeError as err:
+            raise exception.SerializerIsNotSetError() from err
 
-    def read_all_commits(self):
-        raise NotImplementedError()
+    @classmethod
+    def read_all_commits(cls):
+        try:
+            commits = cls.__serializer.get_all_from_list_item(cls.LIST_KEY)
+        except AttributeError as err:
+            raise exception.SerializerIsNotSetError() from err
+        return commits
 
-    def get_commits_count(self):
-        raise NotImplementedError()
+    @classmethod
+    def get_commits_count(cls):
+        try:
+            return len(cls.read_all_commits())
+        except AttributeError as err:
+            raise exception.SerializerIsNotSetError() from err
 
-    @property
-    def serializer(self):
-        return self.__serializer
-
-    def __clear_commits_info(self):
-        raise NotImplementedError()
+    @classmethod
+    def __clear_commits_info(cls):
+        try:
+            cls.__serializer.remove_all_from_list_item(cls.LIST_KEY)
+        except AttributeError as err:
+            raise exception.SerializerIsNotSetError() from err

@@ -1,6 +1,7 @@
 import json
-from lit.file.ISerializer import ISerializer
+
 import lit.file.exception as exception
+from lit.file.ISerializer import ISerializer
 
 
 class JSONSerializer(ISerializer):
@@ -23,11 +24,12 @@ class JSONSerializer(ISerializer):
         with open(self.file_worker.file_path, 'r') as file_object:
             json_data = json.load(file_object)
 
-        '''If there is not value assigned with the key, initialize the value with an empty list'''
+        '''If there is no value assigned with the key, initialize the value with an empty list'''
         if key not in json_data.keys():
             json_data[key] = list()
         elif not isinstance(json_data[key], list):
             raise exception.JSONValueIsNotListError(key, json_data[key])
+
         '''Modifying JSON structure in temporary variable'''
         json_data[key].append(new_item)
 
@@ -35,11 +37,82 @@ class JSONSerializer(ISerializer):
         with open(self.file_worker.file_path, 'w') as file_object:
             json.dump(json_data, file_object)
 
-    def set_to_list_item(self, key, new_value):
-        raise NotImplementedError()
+    def set_to_list_item(self, key, list_index, list_new_value):
+        """Reading JSON data from file to temporary variable"""
+        with open(self.file_worker.file_path, 'r') as file_object:
+            json_data = json.load(file_object)
+
+        '''Check if JSON data contains the key and if the key corresponds to list'''
+        if key not in json_data.keys():
+            raise exception.JSONDoesNotContainSuchKeyError(key)
+        elif not isinstance(json_data[key], list):
+            raise exception.JSONValueIsNotListError(key, json_data[key])
+
+        '''Modifying JSON structure in temporary variable'''
+        try:
+            json_data[key][list_index] = list_new_value
+        except IndexError:
+            # TODO implement more convenient way of handling this error
+            raise
+
+        '''Writing edited JSON data back to file (overwriting the old data)'''
+        with open(self.file_worker.file_path, 'w') as file_object:
+            json.dump(json_data, file_object)
+
+    def get_from_list_item(self, key, index):
+        """Reading JSON data from file to temporary variable"""
+        with open(self.file_worker.file_path, 'r') as file_object:
+            json_data = json.load(file_object)
+
+        '''If there is not value assigned with the key, initialize the value with an empty list'''
+        if key not in json_data.keys():
+            raise TypeError("Key '" + key + "' does not exist")
+        elif not isinstance(json_data[key], list):
+            raise TypeError("Key '" + key + "' does not correspond to list")
+
+        try:
+            return json_data[key][index]
+        except IndexError:
+            # TODO implement more convenient way of handling this error
+            raise
+
+    def get_all_from_list_item(self, key):
+        """Reading JSON data from file to temporary variable"""
+        with open(self.file_worker.file_path, 'r') as file_object:
+            json_data = json.load(file_object)
+
+        '''If there is not value assigned with the key, initialize the value with an empty list'''
+        if key not in json_data.keys():
+            raise TypeError("Key '" + key + "' does not exist")
+        elif not isinstance(json_data[key], list):
+            raise TypeError("Key '" + key + "' does not correspond to list")
+
+        return json_data[key]
 
     def remove_from_list_item(self, key, index):
-        '''Reading JSON data from file to temporary variable'''
+        """Reading JSON data from file to temporary variable"""
+        with open(self.file_worker.file_path, 'r') as file_object:
+            json_data = json.load(file_object)
+
+        '''If there is not value assigned with the key, initialize the value with an empty list'''
+        if key not in json_data.keys():
+            raise exception.JSONDoesNotContainSuchKeyError(key)
+        elif not isinstance(json_data[key], list):
+            raise exception.JSONValueIsNotListError(key, json_data[key])
+
+        '''Modifying JSON structure in temporary variable'''
+        try:
+            del json_data[key][index]
+        except IndexError:
+            # TODO implement more convenient way of handling this error
+            raise
+
+        '''Writing edited JSON data back to file (overwriting the old data)'''
+        with open(self.file_worker.file_path, 'w') as file_object:
+            json.dump(json_data, file_object)
+
+    def remove_all_from_list_item(self, key):
+        """Reading JSON data from file to temporary variable"""
         with open(self.file_worker.file_path, 'r') as file_object:
             json_data = json.load(file_object)
 
@@ -48,12 +121,72 @@ class JSONSerializer(ISerializer):
             return False
         elif not isinstance(json_data[key], list):
             return False
+
         '''Modifying JSON structure in temporary variable'''
-        try:
-            del json_data[key][index]
-        except IndexError:
-            # TODO implement more convenient way of handling this error
-            return False
+        del json_data[key][:]
+
+        '''Writing edited JSON data back to file (overwriting the old data)'''
+        with open(self.file_worker.file_path, 'w') as file_object:
+            json.dump(json_data, file_object)
+        return True
+
+    def add_to_set_item(self, key, value):
+        """Reading JSON data from file to temporary variable"""
+        with open(self.file_worker.file_path, 'r') as file_object:
+            json_data = json.load(file_object)
+
+        '''If there is no value assigned with the key, initialize the value with an empty list'''
+        if key not in json_data.keys():
+            json_data[key] = list()
+        elif not isinstance(json_data[key], list):
+            raise exception.JSONValueIsNotListError(key, json_data[key])
+
+        '''Converting to set'''
+        json_data[key] = set(json_data[key])
+
+        '''Modifying JSON structure in temporary variable'''
+        json_data[key].add(value)
+
+        '''Converting to list'''
+        json_data[key] = list(json_data[key])
+
+        '''Writing edited JSON data back to file (overwriting the old data)'''
+        with open(self.file_worker.file_path, 'w') as file_object:
+            json.dump(json_data, file_object)
+
+    def get_all_from_set_item(self, key):
+        """Reading JSON data from file to temporary variable"""
+        with open(self.file_worker.file_path, 'r') as file_object:
+            json_data = json.load(file_object)
+
+        '''If there is not value assigned with the key, initialize the value with an empty list'''
+        if key not in json_data.keys():
+            raise TypeError("Key '" + key + "' does not exist")
+        elif not isinstance(json_data[key], list):
+            raise TypeError("Key '" + key + "' does not correspond to set")
+
+        return set(json_data[key])
+
+    def remove_from_set_item(self, key, value):
+        """Reading JSON data from file to temporary variable"""
+        with open(self.file_worker.file_path, 'r') as file_object:
+            json_data = json.load(file_object)
+
+        '''If there is no value assigned with the key, initialize the value with an empty list'''
+        if key not in json_data.keys():
+            raise exception.JSONDoesNotContainSuchKeyError(key)
+        elif not isinstance(json_data[key], list):
+            raise exception.JSONValueIsNotListError(key, json_data[key])
+
+        '''Converting to set'''
+        json_data[key] = set(json_data[key])
+
+        '''Modifying JSON structure in temporary variable'''
+        json_data[key].remove(value)
+
+        '''Converting to list'''
+        json_data[key] = list(json_data[key])
+
         '''Writing edited JSON data back to file (overwriting the old data)'''
         with open(self.file_worker.file_path, 'w') as file_object:
             json.dump(json_data, file_object)
@@ -81,4 +214,4 @@ class JSONSerializer(ISerializer):
     def get_items_count(self):
         with open(self.file_worker.file_path, 'r') as file_object:
             json_data = json.load(file_object)
-            return len(json_data)
+        return len(json_data)
