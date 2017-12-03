@@ -10,6 +10,8 @@ class CommitsHistoryManager():
     COMMIT_DATETIME_KEY = 'datetime'
     COMMIT_MESSAGE_KEY = 'message'
     COMMIT_HASH_KEY = 'hash'
+    COMMIT_USER_NAME_KEY = 'username'
+    COMMIT_USER_EMAIL_KEY = 'email'
 
     @classmethod
     def init(cls, serializer):
@@ -18,11 +20,15 @@ class CommitsHistoryManager():
         cls.__serializer = serializer
 
     @classmethod
-    def write_commit_info(cls, commit_message, commit_hash, commit_datetime=datetime.now()):
+    def write_commit_info(
+            cls, commit_message, commit_hash, commit_user_name,
+            commit_user_email, commit_datetime=datetime.now()):
         date_time_str = commit_datetime.strftime(cls.DATETIME_FORMAT)
         commit_info = {
             cls.COMMIT_DATETIME_KEY: date_time_str,
             cls.COMMIT_HASH_KEY: commit_hash,
+            cls.COMMIT_USER_EMAIL_KEY: commit_user_email,
+            cls.COMMIT_USER_NAME_KEY: commit_user_name,
             cls.COMMIT_MESSAGE_KEY: commit_message,
         }
         try:
