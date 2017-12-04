@@ -18,9 +18,21 @@ class RmCommand(BaseCommand):
         print(filename)
 
         if extension == "":
-            print("No extension")
             delete_list = os.listdir(delete_path)
             print(delete_list)
+
+            c = open('.lit/tracked_files.json', 'r')
+            tracked = json.load(c)
+            c.close()
+            print(tracked['files'])
+            print(len(tracked['files']))
+
+            b = open('.lit/tracked_files.json', 'w')
+            for file in delete_list:
+                if file in tracked['files']:
+                    tracked['files'].remove(file)
+            json.dump(tracked, b)
+            b.close()
 
         else:
             print("i have extention" + extension)
