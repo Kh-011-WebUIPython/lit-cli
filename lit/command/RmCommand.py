@@ -30,7 +30,7 @@ class RmCommand(BaseCommand):
             b = open('.lit/tracked_files.json', 'w')
             for file in delete_list:
                 if file in tracked['files']:
-                    tracked['files'].remove(file)
+                    tracked['files'].remove(filename)
             json.dump(tracked, b)
             b.close()
 
@@ -41,7 +41,7 @@ class RmCommand(BaseCommand):
             tracked = json.load(a)
             a.close()
 
-            tracked['files'].remove(filename)
+            tracked['files'].remove(delete_path)
 
             b = open('.lit/tracked_files.json', 'w')
             json.dump(tracked, b)
