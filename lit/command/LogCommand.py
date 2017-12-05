@@ -1,9 +1,17 @@
 from lit.command.BaseCommand import BaseCommand
+from lit.file.StringManager import StringManager
+
 import json
 
 class LogCommand(BaseCommand):
-    def __init__(self, name, help_message):
-        super().__init__(name, help_message)
+    __COMMAND_LOG_NAME_KEY = 'COMMAND_LOG_NAME'
+    __COMMAND_LOG_HELP_KEY = 'COMMAND_LOG_HELP'
+
+    def __init__(self):
+        name = StringManager.get_string(self.__COMMAND_LOG_NAME_KEY)
+        help_message = StringManager.get_string(self.__COMMAND_LOG_HELP_KEY)
+        arguments = []
+        super().__init__(name, help_message, arguments)
 
     def run(self, **args):
         b = open('.lit/commits_log.json', 'r')
