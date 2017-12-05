@@ -16,31 +16,24 @@ class RmCommand(BaseCommand):
 
 
         if extension == "":
-            print("i have no extention")
-            delete_list = os.listdir(delete_path)
-
+            delete_list = self.get_file_list(delete_path)
 
             c = open('.lit/tracked_files.json', 'r')
             tracked = json.load(c)
             c.close()
 
 
+            for file in delete_list:
+                if file in tracked['files']:
+                    tracked['files'].remove(file)
+
+
+
             b = open('.lit/tracked_files.json', 'w')
-            print(delete_path)
-            print(delete_list)
-            for file in tracked['files']:
-                print(file)
-
-                if file in delete_list:
-                    print("i am in")
-                    if not file.find(delete_path) == -1:
-                        tracked['files'].remove(delete_path+'/'+file)
             json.dump(tracked, b)
-
             b.close()
 
         else:
-            print("i have extention" + extension)
 
             a = open('.lit/tracked_files.json', 'r')
             tracked = json.load(a)
@@ -51,3 +44,14 @@ class RmCommand(BaseCommand):
             b = open('.lit/tracked_files.json', 'w')
             json.dump(tracked, b)
             b.close()
+
+
+
+
+    def get_file_list(self, *args):
+        file_list = []
+        for root, dirs, files in os.walk(args[0]):
+            for f in files:
+                path = os.path.join(root, f)
+                file_list.append(path)
+        return file_list
