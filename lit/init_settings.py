@@ -2,46 +2,45 @@
     Run only if strings file is absent or needs an update
 """
 from lit.file.JSONSerializer import JSONSerializer
-from lit.file.StringManager import StringManager
+from lit.file.SettingsManager import SettingsManager
 import lit.paths
 
-STRINGS = {
-    'PROGRAM_NAME': 'lit',
-    'PROGRAM_DESCRIPTION': 'LIT version control system',
+SETTINGS = {
+    'INIT_LIT': '.lit',
+    'INIT_LIT_INITED': 'LIT has been already inited in this directory',
+    'INIT_COMMIT_DIR': 'commits',
+    'INIT_TRACKED_FILE': 'tracked_files.json',
+    'INIT_COMMIT_LOG': 'commits_log.json',
+    'INIT_TRACKED_FILE_INIT': '{"files": []}',
+    'INIT_COMMIT_LOG_INIT': '{"commits":[]}',
 
-    'COMMAND_ADD_NAME': 'add',
-    'COMMAND_ADD_HELP': 'adds files to staging area',
-    'COMMAND_ADD_ARGUMENT_PATH_NAME': 'path',
-    'COMMAND_ADD_ARGUMENT_PATH_HELP': 'path to file',
 
-    'COMMAND_COMMIT_NAME': 'commit',
-    'COMMAND_COMMIT_HELP': 'commits files from staging area to repository',
-    'COMMAND_COMMIT_ARGUMENT_MESSAGE_NAME': 'message',
-    'COMMAND_COMMIT_ARGUMENT_MESSAGE_HELP': 'message which describes commit',
+    'TRACKED_FILE_PATH': '.lit/tracked_files.json',
+    'COMMIT_LOG_PATH': '.lit/commits_log.json',
 
-    'COMMAND_DIFF_NAME': 'diff',
-    'COMMAND_DIFF_HELP': 'shows difference between two files',
-    'COMMAND_DIFF_ARGUMENT_PATH_1_NAME': 'first',
-    'COMMAND_DIFF_ARGUMENT_PATH_1_HELP': 'path to first file',
-    'COMMAND_DIFF_ARGUMENT_PATH_2_NAME': 'second',
-    'COMMAND_DIFF_ARGUMENT_PATH_2_HELP': 'path to second file',
 
-    'COMMAND_INIT_NAME': 'init',
-    'COMMAND_INIT_HELP': 'initializes repository in the current directory',
 
-    'COMMAND_LOG_NAME': 'log',
-    'COMMAND_LOG_HELP': 'shows lit log',
+    'LOG_COMMIT': 'Commit: ',
+    'LOG_COMMIT_MESSAGE': 'Commit message: ',
+    'LOG_USERNAME': 'Username: ',
+    'LOG_DATE': 'Date: ',
 
-    'COMMAND_RM_NAME': 'rm',
-    'COMMAND_RM_HELP': 'removes files from staging area',
-    'COMMAND_RM_ARGUMENT_PATH_NAME': 'path',
-    'COMMAND_RM_ARGUMENT_PATH_HELP': 'path to file',
 
-    'COMMAND_STATUS_NAME': 'status',
-    'COMMAND_STATUS_HELP': 'shows repository state',
+
+    'COMMIT_FILES_IN_COMMIT_DIR': '.lit/commits/',
+    'COMMIT_ZIP_FILE_NAME': '.lit/commits/hash',
+    'COMMIT_ZIP_EXTENCION': '.zip',
+    'COMMIT_USER': 'user',
+    'COMMIT_LONG_HASH': 'long_hash',
+    'COMMIT_SHORT_HASH': 'short_hash',
+    'COMMIT_DATETIME': 'datetime',
+    'COMMIT_COMMENT': 'comment',
+
+
 }
 
 if __name__ == '__main__':
-    strings_serializer = JSONSerializer(lit.paths.STRINGS_PATH)
-    StringManager.init(strings_serializer)
-    StringManager.set_strings(STRINGS)
+    settings_serializer = JSONSerializer(lit.paths.SETTINGS_PATH)
+    SettingsManager.init(settings_serializer)
+    for k, v in SETTINGS.items():
+        SettingsManager.set_var_value(k, v)

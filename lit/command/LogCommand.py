@@ -1,5 +1,7 @@
 from lit.command.BaseCommand import BaseCommand
 from lit.file.StringManager import StringManager
+from lit.file.SettingsManager import SettingsManager
+from lit.file.JSONSerializer import JSONSerializer
 
 import json
 
@@ -14,18 +16,19 @@ class LogCommand(BaseCommand):
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
-        b = open('.lit/commits_log.json', 'r')
-        logs = json.load(b)
+
+        serializer = JSONSerializer(SettingsManager.get_var_value('COMMIT_LOG_PATH'))
+        logs = serializer.read_all_items()
         json_commit_print(logs)
-        b.close()
+
 
 
 
 
 def json_commit_print(json):
     for commit in json["commits"]:
-        s = "Commit: " + commit["short_hash"]+ ";\n" +\
-            "Commit message: " + commit["comment"][0] + ";\n" + \
-            "Username: " + commit["user"] + ";\n" + \
-            "Date: " + commit["datetime"][:19] + "\n"
+        s = SettingsManager.get_var_value('LOG_COMMIT') + commit["short_hash"]+ ";\n" +\
+            SettingsManager.get_var_value('LOG_COMMIT_MESSAGE') + commit["comment"][0] + ";\n" + \
+            SettingsManager.get_var_value('LOG_USERNAME') + commit["user"] + ";\n" + \
+            SettingsManager.get_var_value('LOG_DATE') + commit["datetime"][:19] + "\n"
         print(s)

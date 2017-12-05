@@ -3,6 +3,7 @@ import argparse
 import lit.paths
 from lit.file.JSONSerializer import JSONSerializer
 from lit.file.StringManager import StringManager
+from lit.file.SettingsManager import SettingsManager
 from lit.command.AddCommand import AddCommand
 from lit.command.CommitCommand import CommitCommand
 from lit.command.DiffCommand import DiffCommand
@@ -28,14 +29,17 @@ def main(prog_name, desc, commands):
         cli_args = ['--help']
     else:
         cli_args = sys.argv[1:]
-    # cli_args = ['add', 'file_1.py']
+
     parsed = parser.parse_args(cli_args)
-    print(parsed.function(parsed))
+    parsed.function(parsed)
 
 
 if __name__ == '__main__':
     strings_serializer = JSONSerializer(lit.paths.STRINGS_PATH)
     StringManager.init(strings_serializer)
+
+    settings_serializer = JSONSerializer(lit.paths.SETTINGS_PATH)
+    SettingsManager.init(settings_serializer)
 
     program_name = StringManager.get_string('PROGRAM_NAME')
     description = StringManager.get_string('PROGRAM_DESCRIPTION')

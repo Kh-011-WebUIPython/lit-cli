@@ -1,4 +1,3 @@
-from lit.command.BaseCommand import BaseCommand
 from zipfile import *
 from datetime import datetime
 import json
@@ -7,6 +6,8 @@ import os
 from hashlib import blake2b
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.StringManager import StringManager
+from lit.file.SettingsManager import SettingsManager
+from lit.file.JSONSerializer import JSONSerializer
 
 
 class CommitCommand(BaseCommand):
@@ -29,31 +30,33 @@ class CommitCommand(BaseCommand):
 
     def run(self, **args):
 
-        a = open('.lit/tracked_files.json', 'r')
-        tracked = json.load(a)
-        a.close()
 
-        file_count = len(os.listdir('.lit/commits/'))
-        with ZipFile('.lit/commits/hash' + str(file_count) + '.zip', 'w') as myzip:
+        serializer_tracked = JSONSerializer(SettingsManager.get_var_value('TRACKED_FILE_PATH'))
+        tracked = serializer_tracked.read_all_items()
+
+        file_count = len(os.listdir(SettingsManager.get_var_value('COMMIT_FILES_IN_COMMIT_DIR')))
+        with ZipFile(SettingsManager.get_var_value('COMMIT_ZIP_FILE_NAME') + str(file_count) +
+                             SettingsManager.get_var_value('COMMIT_ZIP_EXTENCION'), 'w') as myzip:
+
             for file in tracked['files']:
                 myzip.write(file)
 
 
         commit = {
-            'user': 'WIP',
-                  'long_hash': blake2b(b'Hello world').hexdigest(),
-                  'short_hash':  blake2b(b'Hello world').hexdigest()[:10],
-                  'datetime': str(datetime.utcnow()),
-                  'comment': sys.argv[2:],
+            SettingsManager.get_var_value('COMMIT_USER'): 'WIP',
+            SettingsManager.get_var_value('COMMIT_LONG_HASH'): blake2b(b'Hello world').hexdigest(),
+            SettingsManager.get_var_value('COMMIT_SHORT_HASH'):  blake2b(b'Hello world').hexdigest()[:10],
+            SettingsManager.get_var_value('COMMIT_DATETIME'): str(datetime.utcnow()),
+            SettingsManager.get_var_value('COMMIT_COMMENT'): args['message'],
                   }
 
         myzip.close()
 
-        b = open('.lit/commits_log.json', 'r')
-        logs = json.load(b)
-        b.close()
+        serializer_commits = JSONSerializer(SettingsManager.get_var_value('COMMIT_LOG_PATH'))
+        logs = serializer_commits.read_all_items()
 
-        c = open('.lit/commits_log.json', 'w')
+        c = open(SettingsManager.get_var_value('COMMIT_LOG_PATH'), 'w')
         logs["commits"].append(commit)
         json.dump(logs, c)
+        c.close()
 

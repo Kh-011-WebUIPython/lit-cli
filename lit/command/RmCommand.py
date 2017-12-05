@@ -1,8 +1,9 @@
-from lit.command.BaseCommand import BaseCommand, CommandArgument
+from lit.command.BaseCommand import  CommandArgument
 from lit.file.StringManager import StringManager
 from lit.command.BaseCommand import BaseCommand
+from lit.file.JSONSerializer import JSONSerializer
+from lit.file.SettingsManager import SettingsManager
 import json
-import sys
 import os
 
 
@@ -25,39 +26,29 @@ class RmCommand(BaseCommand):
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
-        delete_path = sys.argv[2:][0]
 
-        (filepath, filename) = os.path.split(delete_path)
+        delete_path = args['path']
+
         (shortname, extension) = os.path.splitext(delete_path)
 
+        serializer_tracked = JSONSerializer(SettingsManager.get_var_value('TRACKED_FILE_PATH'))
+        tracked = serializer_tracked.read_all_items()
 
         if extension == "":
             delete_list = self.get_file_list(delete_path)
-
-            c = open('.lit/tracked_files.json', 'r')
-            tracked = json.load(c)
-            c.close()
-
 
             for file in delete_list:
                 if file in tracked['files']:
                     tracked['files'].remove(file)
 
-
-
-            b = open('.lit/tracked_files.json', 'w')
+            b = open(SettingsManager.get_var_value('TRACKED_FILE_PATH'), 'w')
             json.dump(tracked, b)
             b.close()
 
         else:
-
-            a = open('.lit/tracked_files.json', 'r')
-            tracked = json.load(a)
-            a.close()
-
             tracked['files'].remove(delete_path)
 
-            b = open('.lit/tracked_files.json', 'w')
+            b = open(SettingsManager.get_var_value('TRACKED_FILE_PATH'), 'w')
             json.dump(tracked, b)
             b.close()
 

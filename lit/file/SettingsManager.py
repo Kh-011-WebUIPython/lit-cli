@@ -2,17 +2,22 @@ from lit.file.ISerializer import ISerializer
 
 
 class SettingsManager():
-    def __init__(self, serializer):
+    def __init__(self):
+        raise TypeError('SettingsManager is not designed to create its instances')
+
+    @classmethod
+    def init(cls, serializer):
         if not issubclass(type(serializer), ISerializer):
             raise TypeError('ISerializer implementations supported only')
-        self.__serializer = serializer
+        cls.__serializer = serializer
 
-    def get_var_value(self, var_key):
-        return self.serializer.get_value(var_key)
+    @classmethod
+    def get_var_value(cls, var_key):
+        value = cls.__serializer.get_value(var_key)
+        if value is None:
+            raise RuntimeError('Setting variable \'' + var_key + '\' not found')
+        return value
 
-    def set_var_value(self, var_key, var_new_value):
-        self.serializer.set_value(var_key, var_new_value)
-
-    @property
-    def serializer(self):
-        return self.__serializer
+    @classmethod
+    def set_var_value(cls, var_key, var_new_value):
+        cls.__serializer.set_value(var_key, var_new_value)
