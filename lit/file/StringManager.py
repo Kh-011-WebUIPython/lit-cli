@@ -16,6 +16,7 @@ class StringManager():
 
     @classmethod
     def get_string(cls, key):
+        # TODO implement strings caching
         try:
             value = cls.__serializer.get_value(key)
             if value is None:
