@@ -9,7 +9,6 @@ class AddCommand(BaseCommand):
 
     def run(self, *args):
         file_list = self.get_file_list(sys.argv[2:])
-        print(file_list)
         if not file_list == None:
            a = open('.lit/tracked_files.json', 'r')
            tracked = json.load(a)

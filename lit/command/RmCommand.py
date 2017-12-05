@@ -2,7 +2,6 @@ from lit.command.BaseCommand import BaseCommand
 import json
 import sys
 import os
-import glob
 
 
 class RmCommand(BaseCommand):
@@ -15,23 +14,29 @@ class RmCommand(BaseCommand):
         (filepath, filename) = os.path.split(delete_path)
         (shortname, extension) = os.path.splitext(delete_path)
 
-        print(filename)
 
         if extension == "":
+            print("i have no extention")
             delete_list = os.listdir(delete_path)
-            print(delete_list)
+
 
             c = open('.lit/tracked_files.json', 'r')
             tracked = json.load(c)
             c.close()
-            print(tracked['files'])
-            print(len(tracked['files']))
+
 
             b = open('.lit/tracked_files.json', 'w')
-            for file in delete_list:
-                if file in tracked['files']:
-                    tracked['files'].remove(filename)
+            print(delete_path)
+            print(delete_list)
+            for file in tracked['files']:
+                print(file)
+
+                if file in delete_list:
+                    print("i am in")
+                    if not file.find(delete_path) == -1:
+                        tracked['files'].remove(delete_path+'/'+file)
             json.dump(tracked, b)
+
             b.close()
 
         else:
@@ -46,9 +51,3 @@ class RmCommand(BaseCommand):
             b = open('.lit/tracked_files.json', 'w')
             json.dump(tracked, b)
             b.close()
-
- #
-
-#        if not super().run():
-#           return False
-#        raise NotImplementedError()

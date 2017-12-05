@@ -4,7 +4,7 @@ from datetime import datetime
 import json
 import sys
 import os
-
+from hashlib import blake2b
 
 class CommitCommand(BaseCommand):
     def __init__(self, name, help_message):
@@ -20,15 +20,17 @@ class CommitCommand(BaseCommand):
         with ZipFile('.lit/commits/hash' + str(file_count) + '.zip', 'w') as myzip:
             for file in tracked['files']:
                 myzip.write(file)
-        myzip.close()
+
 
         commit = {
             'user': 'WIP',
-                  'long_hash': 'hash()',
-                  'short_hash': 'hash()',
+                  'long_hash': blake2b(b'Hello world').hexdigest(),
+                  'short_hash':  blake2b(b'Hello world').hexdigest()[:10],
                   'datetime': str(datetime.utcnow()),
                   'comment': sys.argv[2:],
                   }
+
+        myzip.close()
 
         b = open('.lit/commits_log.json', 'r')
         logs = json.load(b)
@@ -38,8 +40,3 @@ class CommitCommand(BaseCommand):
         logs["commits"].append(commit)
         json.dump(logs, c)
 
-
-
-# if not super().run():
-#            return False
-#        raise NotImplementedError()
