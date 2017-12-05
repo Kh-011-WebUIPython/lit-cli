@@ -44,6 +44,4 @@ STRINGS = {
 if __name__ == '__main__':
     strings_serializer = JSONSerializer(lit.paths.STRINGS_PATH)
     StringManager.init(strings_serializer)
-    # TODO write values using single file opening
-    for key, value in STRINGS.items():
-        StringManager.set_string(key, value)
+    StringManager.set_strings(STRINGS)

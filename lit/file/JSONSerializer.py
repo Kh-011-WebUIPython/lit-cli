@@ -198,6 +198,14 @@ class JSONSerializer(ISerializer):
         with open(self.file_worker.file_path, 'w') as file_object:
             json.dump(json_data, file_object)
 
+    def set_values(self, values):
+        with open(self.file_worker.file_path, 'r') as file_object:
+            json_data = json.load(file_object)
+        for k, v in values.items():
+            json_data[k] = v
+        with open(self.file_worker.file_path, 'w') as file_object:
+            json.dump(json_data, file_object)
+
     def get_value(self, key):
         with open(self.file_worker.file_path, 'r') as file_object:
             json_data = json.load(file_object)

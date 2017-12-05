@@ -86,6 +86,17 @@ class TestJSONSerializer(unittest.TestCase):
             actual_value = len(json_data[self.list_key])
             self.assertEqual(expected_value, actual_value)
 
+    def test_set_values(self):
+        serializer = JSONSerializer(TEST_JSON_FILE_PATH)
+
+        serializer.set_values(self.item1)
+        with open(TEST_JSON_FILE_PATH, 'r') as file_object:
+            json_data = json.load(file_object)
+            for key in self.item1.keys():
+                self.assertIn(key, json_data.keys())
+                self.assertEqual(self.item1[key], json_data[key])
+            self.assertEqual(len(self.item1), len(json_data))
+
 
 if __name__ == '__main__':
     unittest.main()
