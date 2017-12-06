@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import sys
 import argparse
 import lit.paths
@@ -29,7 +31,6 @@ def main(prog_name, desc, commands):
         cli_args = ['--help']
     else:
         cli_args = sys.argv[1:]
-
     parsed = parser.parse_args(cli_args)
     parsed.function(parsed)
 
