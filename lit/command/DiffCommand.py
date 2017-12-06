@@ -1,5 +1,6 @@
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.StringManager import StringManager
+import lit.diff.roberteldersoftwarediff as diff
 
 
 class DiffCommand(BaseCommand):
@@ -30,4 +31,9 @@ class DiffCommand(BaseCommand):
     def run(self, **args):
         if not super().run():
             return False
-        raise NotImplementedError()
+        diff.main(
+            [
+                args[StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_1_NAME_KEY)],
+                args[StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_2_NAME_KEY)],
+            ]
+        )
