@@ -28,9 +28,8 @@ def main(prog_name, desc, commands):
         cli_args = ['--help']
     else:
         cli_args = sys.argv[1:]
-    # cli_args = ['add', 'file_1.py']
     parsed = parser.parse_args(cli_args)
-    print(parsed.function(parsed))
+    parsed.function(parsed)
 
 
 if __name__ == '__main__':
