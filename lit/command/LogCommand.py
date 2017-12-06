@@ -28,7 +28,7 @@ class LogCommand(BaseCommand):
 def json_commit_print(json):
     for commit in json["commits"]:
         s = SettingsManager.get_var_value('LOG_COMMIT') + commit["short_hash"]+ ";\n" +\
-            SettingsManager.get_var_value('LOG_COMMIT_MESSAGE') + commit["comment"][0] + ";\n" + \
+            SettingsManager.get_var_value('LOG_COMMIT_MESSAGE') + commit["comment"] + ";\n" + \
             SettingsManager.get_var_value('LOG_USERNAME') + commit["user"] + ";\n" + \
             SettingsManager.get_var_value('LOG_DATE') + commit["datetime"][:19] + "\n"
         print(s)

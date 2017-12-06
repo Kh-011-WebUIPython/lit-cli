@@ -1,14 +1,13 @@
 from zipfile import *
 from datetime import datetime
 import json
-import sys
 import os
 from hashlib import blake2b
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.StringManager import StringManager
 from lit.file.SettingsManager import SettingsManager
 from lit.file.JSONSerializer import JSONSerializer
-
+from hashlib import md5
 
 class CommitCommand(BaseCommand):
     __COMMAND_COMMIT_NAME_KEY = 'COMMAND_COMMIT_NAME'
@@ -41,11 +40,11 @@ class CommitCommand(BaseCommand):
             for file in tracked['files']:
                 myzip.write(file)
 
-
+        myzip_hash = self.get_MD5_hash(myzip.filename)
         commit = {
             SettingsManager.get_var_value('COMMIT_USER'): 'WIP',
-            SettingsManager.get_var_value('COMMIT_LONG_HASH'): blake2b(b'Hello world').hexdigest(),
-            SettingsManager.get_var_value('COMMIT_SHORT_HASH'):  blake2b(b'Hello world').hexdigest()[:10],
+            SettingsManager.get_var_value('COMMIT_LONG_HASH'): myzip_hash,
+            SettingsManager.get_var_value('COMMIT_SHORT_HASH'): myzip_hash[:10],
             SettingsManager.get_var_value('COMMIT_DATETIME'): str(datetime.utcnow()),
             SettingsManager.get_var_value('COMMIT_COMMENT'): args['message'],
                   }
@@ -60,3 +59,16 @@ class CommitCommand(BaseCommand):
         json.dump(logs, c)
         c.close()
 
+    def get_MD5_hash(self, file_path):
+
+        chunk_size = 8192
+        h = md5()
+        with open(file_path, 'rb') as f:
+            while True:
+                chunk = f.read(chunk_size)
+                if len  (chunk):
+                    h.update(chunk)
+                else:
+                    break
+
+        return h.hexdigest()
