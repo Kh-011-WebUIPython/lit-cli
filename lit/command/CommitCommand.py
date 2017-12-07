@@ -2,12 +2,12 @@ from zipfile import *
 from datetime import datetime
 import json
 import os
-from hashlib import blake2b
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.StringManager import StringManager
 from lit.file.SettingsManager import SettingsManager
 from lit.file.JSONSerializer import JSONSerializer
-from hashlib import md5
+import hashlib
+
 
 class CommitCommand(BaseCommand):
     __COMMAND_COMMIT_NAME_KEY = 'COMMAND_COMMIT_NAME'
@@ -29,25 +29,23 @@ class CommitCommand(BaseCommand):
 
     def run(self, **args):
 
-
         serializer_tracked = JSONSerializer(SettingsManager.get_var_value('TRACKED_FILE_PATH'))
         tracked = serializer_tracked.read_all_items()
 
         file_count = len(os.listdir(SettingsManager.get_var_value('COMMIT_FILES_IN_COMMIT_DIR')))
         with ZipFile(SettingsManager.get_var_value('COMMIT_ZIP_FILE_NAME') + str(file_count) +
                              SettingsManager.get_var_value('COMMIT_ZIP_EXTENCION'), 'w') as myzip:
-
             for file in tracked['files']:
                 myzip.write(file)
 
-        myzip_hash = self.get_MD5_hash(myzip.filename)
+        myzip_hash = self.get_file_hash(myzip.filename)
         commit = {
             SettingsManager.get_var_value('COMMIT_USER'): 'WIP',
             SettingsManager.get_var_value('COMMIT_LONG_HASH'): myzip_hash,
             SettingsManager.get_var_value('COMMIT_SHORT_HASH'): myzip_hash[:10],
             SettingsManager.get_var_value('COMMIT_DATETIME'): str(datetime.utcnow()),
             SettingsManager.get_var_value('COMMIT_COMMENT'): args['message'],
-                  }
+        }
 
         myzip.close()
 
@@ -59,16 +57,9 @@ class CommitCommand(BaseCommand):
         json.dump(logs, c)
         c.close()
 
-    def get_MD5_hash(self, file_path):
-
-        chunk_size = 8192
-        h = md5()
-        with open(file_path, 'rb') as f:
-            while True:
-                chunk = f.read(chunk_size)
-                if len  (chunk):
-                    h.update(chunk)
-                else:
-                    break
-
-        return h.hexdigest()
+    def get_file_hash(self, file_name):
+        hsh = hashlib.sha3_384()
+        with open(file_name, 'br') as file:
+            for chunk in iter(lambda: file.read(4096), b''):
+                hsh.update(chunk)
+        return hsh.hexdigest()
