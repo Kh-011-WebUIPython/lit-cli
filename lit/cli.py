@@ -3,6 +3,8 @@
 import sys
 import argparse
 import lit.paths
+import lit.init_settings
+import lit.init_strings
 from lit.file.JSONSerializer import JSONSerializer
 from lit.file.StringManager import StringManager
 from lit.file.SettingsManager import SettingsManager
@@ -15,7 +17,7 @@ from lit.command.RmCommand import RmCommand
 from lit.command.StatusCommand import StatusCommand
 
 
-def main(prog_name, desc, commands):
+def main_run(prog_name, desc, commands):
     parser = argparse.ArgumentParser(prog=prog_name, description=desc)
     subparsers_action = parser.add_subparsers()
 
@@ -35,9 +37,11 @@ def main(prog_name, desc, commands):
     parsed.function(parsed)
 
 
-if __name__ == '__main__':
+def main():
     strings_serializer = JSONSerializer(lit.paths.STRINGS_PATH)
     StringManager.init(strings_serializer)
+
+    StringManager.set_strings(lit.init_strings.STRINGS)
 
     settings_serializer = JSONSerializer(lit.paths.SETTINGS_PATH)
     SettingsManager.init(settings_serializer)
@@ -55,4 +59,8 @@ if __name__ == '__main__':
         StatusCommand(),
     ]
 
-    main(program_name, description, commands)
+    main_run(program_name, description, commands)
+
+
+if __name__ == '__main__':
+    main()
