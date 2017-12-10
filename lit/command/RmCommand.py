@@ -1,59 +1,52 @@
-from lit.command.BaseCommand import  CommandArgument
-from lit.file.StringManager import StringManager
-from lit.command.BaseCommand import BaseCommand
-from lit.file.JSONSerializer import JSONSerializer
-from lit.file.SettingsManager import SettingsManager
 import json
 import os
 
+from lit.command.BaseCommand import BaseCommand
+from lit.command.BaseCommand import CommandArgument
+from lit.file.JSONSerializer import JSONSerializer
+from lit.strings_holder import StringsHolder
+
 
 class RmCommand(BaseCommand):
-    __COMMAND_RM_NAME_KEY = 'COMMAND_RM_NAME'
-    __COMMAND_RM_HELP_KEY = 'COMMAND_RM_HELP'
-    __COMMAND_RM_ARGUMENT_PATH_NAME_KEY = 'COMMAND_RM_ARGUMENT_PATH_NAME'
-    __COMMAND_RM_ARGUMENT_PATH_HELP_KEY = 'COMMAND_RM_ARGUMENT_PATH_HELP'
-
     def __init__(self):
-        name = StringManager.get_string(self.__COMMAND_RM_NAME_KEY)
-        help_message = StringManager.get_string(self.__COMMAND_RM_HELP_KEY)
+        name = StringsHolder.Commands.Rm.NAME
+        help_message = StringsHolder.Commands.Rm.HELP
         arguments = [
             CommandArgument(
-                name=StringManager.get_string(self.__COMMAND_RM_ARGUMENT_PATH_NAME_KEY),
+                name=StringsHolder.Commands.Rm.Arguments.PATH_NAME,
                 type=str,
-                help=StringManager.get_string(self.__COMMAND_RM_ARGUMENT_PATH_HELP_KEY)
+                help=StringsHolder.Commands.Rm.Arguments.PATH_HELP
             ),
         ]
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
 
-        delete_path = args['path']
+        delete_path = args[StringsHolder.Commands.Rm.Arguments.PATH_NAME.value]
 
-        (shortname, extension) = os.path.splitext(delete_path)
+        (short_name, extension) = os.path.splitext(delete_path)
 
-        serializer_tracked = JSONSerializer(SettingsManager.get_var_value('TRACKED_FILE_PATH'))
+        tracked_file_path = StringsHolder.TrackedFileSettings.PATH.value
+        serializer_tracked = JSONSerializer(tracked_file_path)
         tracked = serializer_tracked.read_all_items()
 
         if extension == "":
             delete_list = self.get_file_list(delete_path)
 
             for file in delete_list:
-                if file in tracked['files']:
-                    tracked['files'].remove(file)
+                if file in tracked[StringsHolder.TrackedFileSettings.FILES_KEY]:
+                    tracked[StringsHolder.TrackedFileSettings.FILES_KEY].remove(file)
 
-            b = open(SettingsManager.get_var_value('TRACKED_FILE_PATH'), 'w')
+            b = open(tracked_file_path, 'w')
             json.dump(tracked, b)
             b.close()
 
         else:
             tracked['files'].remove(delete_path)
 
-            b = open(SettingsManager.get_var_value('TRACKED_FILE_PATH'), 'w')
+            b = open(tracked_file_path, 'w')
             json.dump(tracked, b)
             b.close()
-
-
-
 
     def get_file_list(self, *args):
         file_list = []

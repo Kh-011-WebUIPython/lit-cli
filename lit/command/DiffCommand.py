@@ -1,29 +1,22 @@
-from lit.command.BaseCommand import BaseCommand, CommandArgument
-from lit.file.StringManager import StringManager
 import lit.diff.roberteldersoftwarediff as diff
+from lit.command.BaseCommand import BaseCommand, CommandArgument
+from lit.strings_holder import StringsHolder
 
 
 class DiffCommand(BaseCommand):
-    __COMMAND_DIFF_NAME_KEY = 'COMMAND_DIFF_NAME'
-    __COMMAND_DIFF_HELP_KEY = 'COMMAND_DIFF_HELP'
-    __COMMAND_DIFF_ARGUMENT_PATH_1_NAME_KEY = 'COMMAND_DIFF_ARGUMENT_PATH_1_NAME'
-    __COMMAND_DIFF_ARGUMENT_PATH_1_HELP_KEY = 'COMMAND_DIFF_ARGUMENT_PATH_1_HELP'
-    __COMMAND_DIFF_ARGUMENT_PATH_2_NAME_KEY = 'COMMAND_DIFF_ARGUMENT_PATH_2_NAME'
-    __COMMAND_DIFF_ARGUMENT_PATH_2_HELP_KEY = 'COMMAND_DIFF_ARGUMENT_PATH_2_HELP'
-
     def __init__(self):
-        name = StringManager.get_string(self.__COMMAND_DIFF_NAME_KEY)
-        help_message = StringManager.get_string(self.__COMMAND_DIFF_HELP_KEY)
+        name = StringsHolder.Commands.Diff.NAME
+        help_message = StringsHolder.Commands.Diff.HELP
         arguments = [
             CommandArgument(
-                name=StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_1_NAME_KEY),
+                name=StringsHolder.Commands.Diff.Arguments.PATH_1_NAME,
                 type=str,
-                help=StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_1_HELP_KEY)
+                help=StringsHolder.Commands.Diff.Arguments.PATH_1_HELP
             ),
             CommandArgument(
-                name=StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_2_NAME_KEY),
+                name=StringsHolder.Commands.Diff.Arguments.PATH_2_NAME,
                 type=str,
-                help=StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_2_HELP_KEY)
+                help=StringsHolder.Commands.Diff.Arguments.PATH_2_HELP
             ),
         ]
         super().__init__(name, help_message, arguments)
@@ -33,7 +26,7 @@ class DiffCommand(BaseCommand):
             return False
         diff.main(
             [
-                args[StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_1_NAME_KEY)],
-                args[StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_2_NAME_KEY)],
+                args[StringsHolder.Commands.Diff.Arguments.PATH_1_NAME.value],
+                args[StringsHolder.Commands.Diff.Arguments.PATH_2_NAME.value],
             ]
         )

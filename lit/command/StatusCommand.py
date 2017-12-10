@@ -1,14 +1,11 @@
 from lit.command.BaseCommand import BaseCommand
-from lit.file.StringManager import StringManager
+from lit.strings_holder import StringsHolder
 
 
 class StatusCommand(BaseCommand):
-    __COMMAND_STATUS_NAME_KEY = 'COMMAND_STATUS_NAME'
-    __COMMAND_STATUS_HELP_KEY = 'COMMAND_STATUS_HELP'
-
     def __init__(self):
-        name = StringManager.get_string(self.__COMMAND_STATUS_NAME_KEY)
-        help_message = StringManager.get_string(self.__COMMAND_STATUS_HELP_KEY)
+        name = StringsHolder.Commands.Status.NAME
+        help_message = StringsHolder.Commands.Status.HELP
         arguments = []
         super().__init__(name, help_message, arguments)
 
