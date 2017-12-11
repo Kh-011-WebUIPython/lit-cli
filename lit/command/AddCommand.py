@@ -3,25 +3,25 @@ import os
 
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
-from lit.strings_holder import StringsHolder
+from lit.strings_holder import AddStrings, TrackedFileSettings
 
 
 class AddCommand(BaseCommand):
 
     def __init__(self):
-        name = StringsHolder.Commands.Add.NAME
-        help_message = StringsHolder.Commands.Add.HELP
+        name = AddStrings.NAME
+        help_message = AddStrings.HELP
         arguments = [
             CommandArgument(
-                name=StringsHolder.Commands.Add.Arguments.PATH_NAME,
+                name=AddStrings.ARG_PATH_NAME,
                 type=str,
-                help=StringsHolder.Commands.Add.Arguments.PATH_HELP
+                help=AddStrings.ARG_PATH_HELP
             ),
         ]
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
-        path = StringsHolder.Commands.Add.Arguments.PATH_NAME.value
+        path = AddStrings.ARG_PATH_NAME
         file_list = self.get_file_list(args[path])
         if file_list == []:
             file_list = self.get_file(args[path])
@@ -29,7 +29,7 @@ class AddCommand(BaseCommand):
             pass
 
         if file_list == None:
-            serializer = JSONSerializer(StringsHolder.TrackedFileSettings.PATH)
+            serializer = JSONSerializer(TrackedFileSettings.PATH)
             tracked = serializer.read_all_items()
             self.save_tracked_files(file_list, tracked)
 
@@ -52,9 +52,9 @@ class AddCommand(BaseCommand):
         return file_list
 
     def save_tracked_files(self, file_list, tracked):
-        b = open(StringsHolder.TrackedFileSettings.PATH.value, 'w')
+        b = open(TrackedFileSettings.PATH.value, 'w')
         for file in file_list:
-            files_key = StringsHolder.TrackedFileSettings.FILES_KEY
+            files_key = TrackedFileSettings.FILES_KEY
             if file not in tracked[files_key]:
                 tracked[files_key].append(file)
         json.dump(tracked, b)

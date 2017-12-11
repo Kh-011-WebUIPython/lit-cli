@@ -4,29 +4,29 @@ import os
 from lit.command.BaseCommand import BaseCommand
 from lit.command.BaseCommand import CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
-from lit.strings_holder import StringsHolder
+from lit.strings_holder import RmStrings, TrackedFileSettings
 
 
 class RmCommand(BaseCommand):
     def __init__(self):
-        name = StringsHolder.Commands.Rm.NAME
-        help_message = StringsHolder.Commands.Rm.HELP
+        name = RmStrings.NAME
+        help_message = RmStrings.HELP
         arguments = [
             CommandArgument(
-                name=StringsHolder.Commands.Rm.Arguments.PATH_NAME,
+                name=RmStrings.ARG_PATH_NAME,
                 type=str,
-                help=StringsHolder.Commands.Rm.Arguments.PATH_HELP
+                help=RmStrings.ARG_PATH_HELP
             ),
         ]
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
 
-        delete_path = args[StringsHolder.Commands.Rm.Arguments.PATH_NAME.value]
+        delete_path = args[RmStrings.ARG_PATH_NAME.value]
 
         (short_name, extension) = os.path.splitext(delete_path)
 
-        tracked_file_path = StringsHolder.TrackedFileSettings.PATH.value
+        tracked_file_path = TrackedFileSettings.PATH.value
         serializer_tracked = JSONSerializer(tracked_file_path)
         tracked = serializer_tracked.read_all_items()
 
@@ -34,8 +34,8 @@ class RmCommand(BaseCommand):
             delete_list = self.get_file_list(delete_path)
 
             for file in delete_list:
-                if file in tracked[StringsHolder.TrackedFileSettings.FILES_KEY]:
-                    tracked[StringsHolder.TrackedFileSettings.FILES_KEY].remove(file)
+                if file in tracked[TrackedFileSettings.FILES_KEY]:
+                    tracked[TrackedFileSettings.FILES_KEY].remove(file)
 
             b = open(tracked_file_path, 'w')
             json.dump(tracked, b)

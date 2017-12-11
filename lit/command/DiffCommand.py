@@ -1,22 +1,22 @@
 import lit.diff.roberteldersoftwarediff as diff
 from lit.command.BaseCommand import BaseCommand, CommandArgument
-from lit.strings_holder import StringsHolder
+from lit.strings_holder import DiffStrings
 
 
 class DiffCommand(BaseCommand):
     def __init__(self):
-        name = StringsHolder.Commands.Diff.NAME
-        help_message = StringsHolder.Commands.Diff.HELP
+        name = DiffStrings.NAME
+        help_message = DiffStrings.HELP
         arguments = [
             CommandArgument(
-                name=StringsHolder.Commands.Diff.Arguments.PATH_1_NAME,
+                name=DiffStrings.ARG_PATH_1_NAME,
                 type=str,
-                help=StringsHolder.Commands.Diff.Arguments.PATH_1_HELP
+                help=DiffStrings.ARG_PATH_1_HELP
             ),
             CommandArgument(
-                name=StringsHolder.Commands.Diff.Arguments.PATH_2_NAME,
+                name=DiffStrings.ARG_PATH_2_NAME,
                 type=str,
-                help=StringsHolder.Commands.Diff.Arguments.PATH_2_HELP
+                help=DiffStrings.ARG_PATH_2_HELP
             ),
         ]
         super().__init__(name, help_message, arguments)
@@ -26,7 +26,7 @@ class DiffCommand(BaseCommand):
             return False
         diff.main(
             [
-                args[StringsHolder.Commands.Diff.Arguments.PATH_1_NAME.value],
-                args[StringsHolder.Commands.Diff.Arguments.PATH_2_NAME.value],
+                args[DiffStrings.ARG_PATH_1_NAME.value],
+                args[DiffStrings.ARG_PATH_2_NAME.value],
             ]
         )
