@@ -1,31 +1,29 @@
-from lit.command.BaseCommand import BaseCommand
-from lit.file.StringManager import StringManager
-from lit.file.SettingsManager import SettingsManager
 import os
 
-class InitCommand(BaseCommand):
-    __COMMAND_INIT_NAME_KEY = 'COMMAND_INIT_NAME'
-    __COMMAND_INIT_HELP_KEY = 'COMMAND_INIT_HELP'
+from lit.command.BaseCommand import BaseCommand
+from lit.strings_holder import CommitSettings, InitStrings, TrackedFileSettings, LogSettings, \
+    InitSettings
 
+
+class InitCommand(BaseCommand):
     def __init__(self):
-        name = StringManager.get_string(self.__COMMAND_INIT_NAME_KEY)
-        help_message = StringManager.get_string(self.__COMMAND_INIT_HELP_KEY)
+        name = InitStrings.NAME
+        help_message = InitStrings.HELP
         arguments = []
         super().__init__(name, help_message, arguments)
 
-
     def run(self, **args):
-
-        if not os.path.exists(SettingsManager.get_var_value('INIT_LIT')):
-            os.makedirs(SettingsManager.get_var_value('INIT_LIT'))
-            os.makedirs(os.path.join(SettingsManager.get_var_value('INIT_LIT'),
-                                     SettingsManager.get_var_value('INIT_COMMIT_DIR')))
-            with open(os.path.join(SettingsManager.get_var_value('INIT_LIT'),
-                                   SettingsManager.get_var_value('INIT_TRACKED_FILE')), 'w') as outfile:
-                outfile.write(SettingsManager.get_var_value('INIT_TRACKED_FILE_INIT'))
+        lit_dir = StringsHolder.InitSettings.LIT_DIR.value
+        if not os.path.exists(lit_dir):
+            os.makedirs(lit_dir)
+            commit_dir = CommitSettings.DIR_NAME.value
+            os.makedirs(os.path.join(lit_dir, commit_dir))
+            tracked_file = TrackedFileSettings.FILE_NAME.value
+            with open(os.path.join(lit_dir, tracked_file, 'w')) as outfile:
+                outfile.write(TrackedFileSettings.INIT_CONTENT.value)
                 pass
-            with open(os.path.join(SettingsManager.get_var_value('INIT_LIT'),
-                                   SettingsManager.get_var_value('INIT_COMMIT_LOG')), 'w') as outfile:
-                outfile.write(SettingsManager.get_var_value('INIT_COMMIT_LOG_INIT'))
+            log_file = LogSettings.FILE_NAME.value
+            with open(os.path.join(lit_dir, log_file), 'w') as outfile:
+                outfile.write(LogSettings.INIT_CONTENT.value)
         else:
-            print(SettingsManager.get_var_value('INIT_LIT_INITED'))
+            print(InitSettings.LIT_INITED)

@@ -15,6 +15,7 @@ from lit.command.InitCommand import InitCommand
 from lit.command.LogCommand import LogCommand
 from lit.command.RmCommand import RmCommand
 from lit.command.StatusCommand import StatusCommand
+from lit.strings_holder import ProgramStrings
 
 
 def main_run(prog_name, desc, commands):
@@ -46,8 +47,8 @@ def main():
     settings_serializer = JSONSerializer(lit.paths.SETTINGS_PATH)
     SettingsManager.init(settings_serializer)
 
-    program_name = StringManager.get_string('PROGRAM_NAME')
-    description = StringManager.get_string('PROGRAM_DESCRIPTION')
+    program_name = ProgramStrings.NAME
+    description = ProgramStrings.DESCRIPTION
 
     commands = [
         AddCommand(),
