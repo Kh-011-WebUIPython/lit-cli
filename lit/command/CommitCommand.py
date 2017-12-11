@@ -67,7 +67,7 @@ class CommitCommand(BaseCommand):
             json.dump(json_data, file)
 
     def get_file_hash(self, file_name):
-        hsh = hashlib.sha3_384()
+        hsh = hashlib.sha256()
         with open(file_name, 'br') as file:
             for chunk in iter(lambda: file.read(4096), b''):
                 hsh.update(chunk)
