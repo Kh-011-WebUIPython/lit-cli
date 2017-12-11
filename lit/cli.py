@@ -46,6 +46,9 @@ def main():
     settings_serializer = JSONSerializer(lit.paths.SETTINGS_PATH)
     SettingsManager.init(settings_serializer)
 
+    for k, v in lit.init_settings.SETTINGS.items():
+        SettingsManager.set_var_value(k, v)
+
     program_name = StringManager.get_string('PROGRAM_NAME')
     description = StringManager.get_string('PROGRAM_DESCRIPTION')
 

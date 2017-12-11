@@ -1,4 +1,4 @@
-from lit.command.BaseCommand import  CommandArgument
+from lit.command.BaseCommand import CommandArgument
 from lit.file.StringManager import StringManager
 from lit.command.BaseCommand import BaseCommand
 from lit.file.JSONSerializer import JSONSerializer
@@ -46,14 +46,12 @@ class RmCommand(BaseCommand):
             b.close()
 
         else:
+            delete_path = './' + delete_path
             tracked['files'].remove(delete_path)
 
             b = open(SettingsManager.get_var_value('TRACKED_FILE_PATH'), 'w')
             json.dump(tracked, b)
             b.close()
-
-
-
 
     def get_file_list(self, *args):
         file_list = []

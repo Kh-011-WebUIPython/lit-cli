@@ -1,5 +1,7 @@
 from lit.command.BaseCommand import BaseCommand
 from lit.file.StringManager import StringManager
+from lit.file.SettingsManager import SettingsManager
+import json
 
 
 class StatusCommand(BaseCommand):
@@ -15,4 +17,7 @@ class StatusCommand(BaseCommand):
     def run(self, **args):
         if not super().run():
             return False
-        raise NotImplementedError()
+        with open(SettingsManager.get_var_value('TRACKED_FILE_PATH'), 'r') as file:
+            json_data = json.load(file)
+        print('Files in staging area:')
+        print(*json_data['files'], sep='\n')

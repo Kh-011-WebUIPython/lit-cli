@@ -25,34 +25,26 @@ class AddCommand(BaseCommand):
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
-
-
         file_list = self.get_file_list(args['path'])
         if file_list == []:
             file_list = self.get_file(args['path'])
-        else:
-            pass
-
-
 
         if not file_list == None:
             serializer = JSONSerializer(SettingsManager.get_var_value('TRACKED_FILE_PATH'))
             tracked = serializer.read_all_items()
             self.save_tracked_files(file_list, tracked)
 
-        else:
-            pass
-
     def get_file_list(self, *args):
         file_list = []
         for root, dirs, files in os.walk(args[0]):
             for f in files:
                 path = os.path.join(root, f)
-                file_list.append(path)
+                if '.lit' not in path:
+                    file_list.append(path)
 
         return file_list
 
-    def get_file(self,*args):
+    def get_file(self, *args):
         file_list = []
         path = os.path.join(args[0])
         file_list.append(path)
