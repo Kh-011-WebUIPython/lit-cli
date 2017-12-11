@@ -1,29 +1,28 @@
 """
     String constants for lit commands description
 """
-from enum import Enum
 
 
-class ProgramStrings(Enum):
+class ProgramStrings(object):
     NAME = 'lit'
     DESCRIPTION = 'LIT version control system'
 
 
-class AddStrings(Enum):
+class AddStrings(object):
     NAME = 'add'
     HELP = 'adds files to staging area'
     ARG_PATH_NAME = 'path'
     ARG_PATH_HELP = 'path to file'
 
 
-class CommitStrings(Enum):
+class CommitStrings(object):
     NAME = 'commit'
     HELP = 'commits files from staging area to repository'
     ARG_MSG_NAME = 'message'
     ARG_MSG_HELP = 'message which describes commit'
 
 
-class DiffStrings(Enum):
+class DiffStrings(object):
     NAME = 'diff'
     HELP = 'adds files to staging area'
     ARG_PATH_1_NAME = 'first'
@@ -32,41 +31,41 @@ class DiffStrings(Enum):
     ARG_PATH_2_HELP = 'path to second file'
 
 
-class InitStrings(Enum):
+class InitStrings(object):
     NAME = 'init'
     HELP = 'initializes repository in the current directory'
 
 
-class LogStrings(Enum):
+class LogStrings(object):
     NAME = 'log'
     HELP = 'shows lit log'
 
 
-class RmStrings(Enum):
+class RmStrings(object):
     NAME = 'rm'
     HELP = 'removes files from staging area'
     ARG_PATH_NAME = 'path'
     ARG_PATH_HELP = 'path to file'
 
 
-class StatusStrings(Enum):
+class StatusStrings(object):
     NAME = 'status'
     HELP = 'shows repository state'
 
 
-class InitSettings(Enum):
+class InitSettings(object):
     LIT_DIR = '.lit'
     LIT_INITED = 'LIT has been already inited in this directory'
 
 
-class TrackedFileSettings(Enum):
+class TrackedFileSettings(object):
     PATH = '.lit/tracked_files.json'
     FILE_NAME = 'tracked_files.json'
     FILES_KEY = 'files'
     INIT_CONTENT = '{"files": []}'
 
 
-class LogSettings(Enum):
+class LogSettings(object):
     COMMIT = 'Commit: '
     COMMIT_MESSAGE = 'Commit message: '
     USERNAME = 'Username: '
@@ -77,7 +76,7 @@ class LogSettings(Enum):
     KEY = "commits"
 
 
-class CommitSettings(Enum):
+class CommitSettings(object):
     DIR_PATH = '.lit/commits/'
     DIR_NAME = 'commits'
     ZIP_FILE_NAME = '.lit/commits/hash'
