@@ -58,8 +58,8 @@ class DiffCommand(BaseCommand):
         extracted_file_path = os.path.join(extracted_snapshot_path, compared_file_name)
         diff.main(
             [
-                compared_file_path,
                 extracted_file_path,
+                compared_file_path,
             ]
         )
 
