@@ -1,6 +1,7 @@
 """
     String constants for lit commands description
 """
+import lit.paths
 
 
 class ProgramStrings(object):
@@ -54,7 +55,7 @@ class StatusStrings(object):
 
 
 class InitSettings(object):
-    LIT_DIR = '.lit'
+    LIT_DIR = lit.paths.DIR_PATH
     LIT_INITED = 'LIT has been already inited in this directory'
 
 
