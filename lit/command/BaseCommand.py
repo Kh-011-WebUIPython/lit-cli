@@ -1,4 +1,6 @@
+import os
 import abc
+from lit.strings_holder import InitSettings
 
 
 class BaseCommand(abc.ABC):
@@ -21,6 +23,9 @@ class BaseCommand(abc.ABC):
         Returned value:
         True if command succeeded, else returns False
         """
+        if not os.path.exists(InitSettings.LIT_DIR):
+            print('Error: current directory is not a lit repository')
+            return False
         return True
 
     def run_argparse(self, args):

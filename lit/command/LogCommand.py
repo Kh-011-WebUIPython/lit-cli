@@ -3,6 +3,7 @@ from lit.file.JSONSerializer import JSONSerializer
 
 from lit.strings_holder import LogSettings, LogStrings, CommitSettings
 
+
 class LogCommand(BaseCommand):
     def __init__(self):
         name = LogStrings.NAME
@@ -11,18 +12,20 @@ class LogCommand(BaseCommand):
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
+        if not super().run():
+            return False
+
         serializer = JSONSerializer(LogSettings.PATH)
         logs = serializer.read_all_items()
         json_commit_print(logs)
 
 
 def json_commit_print(json):
-    for commit in json["commits"]:
-        s = LogSettings.COMMIT + commit["short_hash"] + ";\n" + \
-            LogSettings.COMMIT_MESSAGE + commit["comment"] + ";\n" + \
-            LogSettings.USERNAME + commit["user"] + ";\n" + \
-            LogSettings.DATE + commit["datetime"][:19] + "\n"
-    for commit in json[LogSettings.KEY]:
+    commits = json[LogSettings.KEY]
+    if len(commits) == 0:
+        print('No commits were found')
+        return
+    for commit in commits:
         short_hash_ = commit[CommitSettings.SHORT_HASH]
         comment = commit[CommitSettings.COMMENT]
         user = commit[CommitSettings.USER]
