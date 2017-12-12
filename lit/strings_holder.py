@@ -1,6 +1,7 @@
 """
     String constants for lit commands description
 """
+import os
 import lit.paths
 
 
@@ -54,13 +55,13 @@ class StatusStrings(object):
     HELP = 'shows repository state'
 
 
-class DiffSettings(object):
-    TEMP_PATH = '/tmp/lit'
-
-
 class InitSettings(object):
     LIT_DIR = lit.paths.DIR_PATH
     LIT_INITED = 'LIT has been already inited in this directory'
+
+
+class DiffSettings(object):
+    TEMP_PATH = os.path.join(InitSettings.LIT_DIR, 'temp')
 
 
 class TrackedFileSettings(object):
