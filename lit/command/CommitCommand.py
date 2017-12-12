@@ -59,6 +59,12 @@ class CommitCommand(BaseCommand):
 
         c = open(LogSettings.PATH, 'w')
         log_item = LogSettings.KEY
+        for item in logs[log_item]:
+            if item[CommitSettings.LONG_HASH] == myzip_hash:
+                print('There is no changes since last commit')
+                json.dump(logs, c)
+                c.close()
+                return
         logs[log_item].append(commit)
         json.dump(logs, c)
         c.close()
