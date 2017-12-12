@@ -21,12 +21,14 @@ class RmCommand(BaseCommand):
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
+        if not super().run():
+            return False
 
-        delete_path = args[RmStrings.ARG_PATH_NAME.value]
+        delete_path = args[RmStrings.ARG_PATH_NAME]
 
         (short_name, extension) = os.path.splitext(delete_path)
 
-        tracked_file_path = TrackedFileSettings.PATH.value
+        tracked_file_path = TrackedFileSettings.PATH
         serializer_tracked = JSONSerializer(tracked_file_path)
         tracked = serializer_tracked.read_all_items()
 

@@ -21,6 +21,8 @@ class AddCommand(BaseCommand):
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
+        if not super().run():
+            return False
 
         path = AddStrings.ARG_PATH_NAME
         file_list = self.get_file_list(args[path])

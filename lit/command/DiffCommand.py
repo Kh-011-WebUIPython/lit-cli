@@ -33,6 +33,9 @@ class DiffCommand(BaseCommand):
         # get last commit short hash
         serializer = JSONSerializer(LogSettings.PATH)
         commits = serializer.read_all_items()['commits']
+        if len(commits) == 0:
+            print('No commits found')
+            return
         last_commit = commits[len(commits) - 1]
         last_commit_short_hash = last_commit["short_hash"]
 

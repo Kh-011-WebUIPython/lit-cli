@@ -13,7 +13,11 @@ class StatusCommand(BaseCommand):
     def run(self, **args):
         if not super().run():
             return False
+
         with open(TrackedFileSettings.PATH, 'r') as file:
             json_data = json.load(file)
-        print('Files in staging area:')
-        print(*json_data['files'], sep='\n')
+        if len(json_data['files']) != 0:
+            print('Files in staging area:')
+            print(*json_data['files'], sep='\n')
+        else:
+            print('Staging area is empty')

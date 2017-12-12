@@ -25,10 +25,14 @@ class CommitCommand(BaseCommand):
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
+        if not super().run():
+            return False
 
         serializer_tracked = JSONSerializer(TrackedFileSettings.PATH)
         tracked = serializer_tracked.read_all_items()
-
+        if len(tracked['files']) == 0:
+            print('No files in staging area were found')
+            return
         zip_file_name = CommitSettings.ZIP_FILE_NAME + CommitSettings.ZIP_EXTENSION
 
         with ZipFile(zip_file_name, 'w') as myzip:
@@ -41,7 +45,7 @@ class CommitCommand(BaseCommand):
                   zip_file_name[:-8] + str(myzip_hash)[:10] + CommitSettings.ZIP_EXTENSION)
         message = args[CommitStrings.ARG_MSG_NAME]
         commit = {
-            CommitSettings.USER: 'WIP',
+            CommitSettings.USER: 'user',
             CommitSettings.LONG_HASH: myzip_hash,
             CommitSettings.SHORT_HASH: myzip_hash[:10],
             CommitSettings.DATETIME: str(datetime.utcnow()),
