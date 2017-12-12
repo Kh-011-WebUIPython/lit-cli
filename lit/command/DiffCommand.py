@@ -1,19 +1,14 @@
 import os
+import shutil
 import zipfile
 import lit.paths
-import shutil
-from lit.command.BaseCommand import BaseCommand, CommandArgument
-from lit.file.StringManager import StringManager
-from lit.file.SettingsManager import SettingsManager
-from lit.file.JSONSerializer import JSONSerializer
 import lit.diff.roberteldersoftwarediff as diff
+from lit.file.JSONSerializer import JSONSerializer
 from lit.command.BaseCommand import BaseCommand, CommandArgument
-from lit.strings_holder import DiffStrings, LogSettings, CommitSettings
+from lit.strings_holder import DiffStrings, LogSettings, CommitSettings, DiffSettings
 
 
 class DiffCommand(BaseCommand):
-    __TEMP_PATH = '/tmp/lit'
-
     def __init__(self):
         name = DiffStrings.NAME
         help_message = DiffStrings.HELP
@@ -45,10 +40,10 @@ class DiffCommand(BaseCommand):
         zip_file_path = os.path.join(commits_dir_path, zip_file_name)
         zip_ref = zipfile.ZipFile(zip_file_path, 'r')
         try:
-            os.mkdir(self.__TEMP_PATH)
+            os.mkdir(DiffSettings.TEMP_PATH)
         except FileExistsError:
             pass
-        extracted_snapshot_path = os.path.join(self.__TEMP_PATH, last_commit_short_hash)
+        extracted_snapshot_path = os.path.join(DiffSettings.TEMP_PATH, last_commit_short_hash)
         try:
             os.mkdir(extracted_snapshot_path)
         except FileExistsError:

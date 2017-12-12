@@ -1,5 +1,5 @@
-from lit.command.BaseCommand import BaseCommand
 import json
+from lit.command.BaseCommand import BaseCommand
 from lit.strings_holder import StatusStrings, TrackedFileSettings
 
 

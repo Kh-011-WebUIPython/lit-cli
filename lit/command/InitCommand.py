@@ -1,7 +1,6 @@
 import os
 from lit.command.BaseCommand import BaseCommand
-from lit.strings_holder import CommitSettings, InitStrings, TrackedFileSettings, LogSettings, \
-    InitSettings
+from lit.strings_holder import CommitSettings, InitStrings, TrackedFileSettings, LogSettings, InitSettings
 
 
 class InitCommand(BaseCommand):
