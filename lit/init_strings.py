@@ -21,10 +21,8 @@ STRINGS = {
 
     'COMMAND_DIFF_NAME': 'diff',
     'COMMAND_DIFF_HELP': 'shows difference between two files',
-    'COMMAND_DIFF_ARGUMENT_PATH_1_NAME': 'first',
-    'COMMAND_DIFF_ARGUMENT_PATH_1_HELP': 'path to first file',
-    'COMMAND_DIFF_ARGUMENT_PATH_2_NAME': 'second',
-    'COMMAND_DIFF_ARGUMENT_PATH_2_HELP': 'path to second file',
+    'COMMAND_DIFF_ARGUMENT_PATH_1_NAME': 'file',
+    'COMMAND_DIFF_ARGUMENT_PATH_1_HELP': 'path to file',
 
     'COMMAND_INIT_NAME': 'init',
     'COMMAND_INIT_HELP': 'initializes repository in the current directory',

@@ -6,7 +6,7 @@ from lit.file.SettingsManager import SettingsManager
 import lit.paths
 
 SETTINGS = {
-    'INIT_LIT': '.lit',
+    'INIT_LIT': lit.paths.DIR_PATH,
     'INIT_LIT_INITED': 'LIT has been already inited in this directory',
     'INIT_COMMIT_DIR': 'commits',
     'INIT_TRACKED_FILE': 'tracked_files.json',

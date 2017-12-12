@@ -1,64 +1,71 @@
-from zipfile import *
-from datetime import datetime
+import hashlib
 import json
 import os
+from datetime import datetime
+from zipfile import *
+
 from lit.command.BaseCommand import BaseCommand, CommandArgument
-from lit.file.StringManager import StringManager
-from lit.file.SettingsManager import SettingsManager
 from lit.file.JSONSerializer import JSONSerializer
 import hashlib
+import lit.paths
+from lit.strings_holder import CommitStrings, TrackedFileSettings, CommitSettings, LogSettings
 
 
 class CommitCommand(BaseCommand):
-    __COMMAND_COMMIT_NAME_KEY = 'COMMAND_COMMIT_NAME'
-    __COMMAND_COMMIT_HELP_KEY = 'COMMAND_COMMIT_HELP'
-    __COMMAND_COMMIT_ARGUMENT_MESSAGE_NAME_KEY = 'COMMAND_COMMIT_ARGUMENT_MESSAGE_NAME'
-    __COMMAND_COMMIT_ARGUMENT_MESSAGE_HELP_KEY = 'COMMAND_COMMIT_ARGUMENT_MESSAGE_HELP'
-
     def __init__(self):
-        name = StringManager.get_string(self.__COMMAND_COMMIT_NAME_KEY)
-        help_message = StringManager.get_string(self.__COMMAND_COMMIT_HELP_KEY)
+        name = CommitStrings.NAME
+        help_message = CommitStrings.HELP
         arguments = [
             CommandArgument(
-                name=StringManager.get_string(self.__COMMAND_COMMIT_ARGUMENT_MESSAGE_NAME_KEY),
+                name=CommitStrings.ARG_MSG_NAME,
                 type=str,
-                help=StringManager.get_string(self.__COMMAND_COMMIT_ARGUMENT_MESSAGE_HELP_KEY)
+                help=CommitStrings.ARG_MSG_HELP
             ),
         ]
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
 
-        serializer_tracked = JSONSerializer(SettingsManager.get_var_value('TRACKED_FILE_PATH'))
+        serializer_tracked = JSONSerializer(TrackedFileSettings.PATH)
         tracked = serializer_tracked.read_all_items()
 
-        file_count = len(os.listdir(SettingsManager.get_var_value('COMMIT_FILES_IN_COMMIT_DIR')))
-        with ZipFile(SettingsManager.get_var_value('COMMIT_ZIP_FILE_NAME') + str(file_count) +
-                             SettingsManager.get_var_value('COMMIT_ZIP_EXTENCION'), 'w') as myzip:
-            for file in tracked['files']:
+        zip_file_name = CommitSettings.ZIP_FILE_NAME + CommitSettings.ZIP_EXTENSION
+
+        with ZipFile(zip_file_name, 'w') as myzip:
+            files_key = TrackedFileSettings.FILES_KEY
+            for file in tracked[files_key]:
                 myzip.write(file)
 
         myzip_hash = self.get_file_hash(myzip.filename)
+        os.rename(zip_file_name,
+                  zip_file_name[:-8] + str(myzip_hash)[:10] + CommitSettings.ZIP_EXTENSION)
+        message = args[CommitStrings.ARG_MSG_NAME]
         commit = {
-            SettingsManager.get_var_value('COMMIT_USER'): 'WIP',
-            SettingsManager.get_var_value('COMMIT_LONG_HASH'): myzip_hash,
-            SettingsManager.get_var_value('COMMIT_SHORT_HASH'): myzip_hash[:10],
-            SettingsManager.get_var_value('COMMIT_DATETIME'): str(datetime.utcnow()),
-            SettingsManager.get_var_value('COMMIT_COMMENT'): args['message'],
+            CommitSettings.USER: 'WIP',
+            CommitSettings.LONG_HASH: myzip_hash,
+            CommitSettings.SHORT_HASH: myzip_hash[:10],
+            CommitSettings.DATETIME: str(datetime.utcnow()),
+            CommitSettings.COMMENT: message,
         }
 
         myzip.close()
 
-        serializer_commits = JSONSerializer(SettingsManager.get_var_value('COMMIT_LOG_PATH'))
+        serializer_commits = JSONSerializer(LogSettings.PATH)
         logs = serializer_commits.read_all_items()
 
-        c = open(SettingsManager.get_var_value('COMMIT_LOG_PATH'), 'w')
-        logs["commits"].append(commit)
+        c = open(LogSettings.PATH, 'w')
+        log_item = LogSettings.KEY
+        logs[log_item].append(commit)
         json.dump(logs, c)
         c.close()
+        with open(TrackedFileSettings.PATH, 'r') as file:
+            json_data = json.load(file)
+        json_data['files'].clear()
+        with open(TrackedFileSettings.PATH, 'w') as file:
+            json.dump(json_data, file)
 
     def get_file_hash(self, file_name):
-        hsh = hashlib.sha3_384()
+        hsh = hashlib.sha256()
         with open(file_name, 'br') as file:
             for chunk in iter(lambda: file.read(4096), b''):
                 hsh.update(chunk)

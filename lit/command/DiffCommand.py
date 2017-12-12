@@ -1,29 +1,27 @@
+import os
+import zipfile
+import lit.paths
+import shutil
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.StringManager import StringManager
+from lit.file.SettingsManager import SettingsManager
+from lit.file.JSONSerializer import JSONSerializer
 import lit.diff.roberteldersoftwarediff as diff
+from lit.command.BaseCommand import BaseCommand, CommandArgument
+from lit.strings_holder import DiffStrings, LogSettings, CommitSettings
 
 
 class DiffCommand(BaseCommand):
-    __COMMAND_DIFF_NAME_KEY = 'COMMAND_DIFF_NAME'
-    __COMMAND_DIFF_HELP_KEY = 'COMMAND_DIFF_HELP'
-    __COMMAND_DIFF_ARGUMENT_PATH_1_NAME_KEY = 'COMMAND_DIFF_ARGUMENT_PATH_1_NAME'
-    __COMMAND_DIFF_ARGUMENT_PATH_1_HELP_KEY = 'COMMAND_DIFF_ARGUMENT_PATH_1_HELP'
-    __COMMAND_DIFF_ARGUMENT_PATH_2_NAME_KEY = 'COMMAND_DIFF_ARGUMENT_PATH_2_NAME'
-    __COMMAND_DIFF_ARGUMENT_PATH_2_HELP_KEY = 'COMMAND_DIFF_ARGUMENT_PATH_2_HELP'
+    __TEMP_PATH = '/tmp/lit'
 
     def __init__(self):
-        name = StringManager.get_string(self.__COMMAND_DIFF_NAME_KEY)
-        help_message = StringManager.get_string(self.__COMMAND_DIFF_HELP_KEY)
+        name = DiffStrings.NAME
+        help_message = DiffStrings.HELP
         arguments = [
             CommandArgument(
-                name=StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_1_NAME_KEY),
+                name=DiffStrings.ARG_PATH_1_NAME,
                 type=str,
-                help=StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_1_HELP_KEY)
-            ),
-            CommandArgument(
-                name=StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_2_NAME_KEY),
-                type=str,
-                help=StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_2_HELP_KEY)
+                help=DiffStrings.ARG_PATH_1_HELP
             ),
         ]
         super().__init__(name, help_message, arguments)
@@ -31,9 +29,41 @@ class DiffCommand(BaseCommand):
     def run(self, **args):
         if not super().run():
             return False
+
+        # get last commit short hash
+        serializer = JSONSerializer(LogSettings.PATH)
+        commits = serializer.read_all_items()['commits']
+        last_commit = commits[len(commits) - 1]
+        last_commit_short_hash = last_commit["short_hash"]
+
+        # unzip last commit snapshot
+        commits_dir_path = os.path.join(lit.paths.DIR_PATH, 'commits')
+        zip_file_name = last_commit_short_hash + CommitSettings.ZIP_EXTENSION
+        zip_file_path = os.path.join(commits_dir_path, zip_file_name)
+        zip_ref = zipfile.ZipFile(zip_file_path, 'r')
+        try:
+            os.mkdir(self.__TEMP_PATH)
+        except FileExistsError:
+            pass
+        extracted_snapshot_path = os.path.join(self.__TEMP_PATH, last_commit_short_hash)
+        try:
+            os.mkdir(extracted_snapshot_path)
+        except FileExistsError:
+            pass
+        print(extracted_snapshot_path)
+        zip_ref.extractall(extracted_snapshot_path)
+        zip_ref.close()
+
+        # run diff
+        compared_file_name = args[DiffStrings.ARG_PATH_1_NAME]
+        compared_file_path = os.path.join(os.getcwd(), compared_file_name)
+        extracted_file_path = os.path.join(extracted_snapshot_path, compared_file_name)
         diff.main(
             [
-                args[StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_1_NAME_KEY)],
-                args[StringManager.get_string(self.__COMMAND_DIFF_ARGUMENT_PATH_2_NAME_KEY)],
+                compared_file_path,
+                extracted_file_path,
             ]
         )
+
+        # remove extracted snapshot
+        shutil.rmtree(extracted_snapshot_path)

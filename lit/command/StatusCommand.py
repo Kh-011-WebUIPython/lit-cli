@@ -1,18 +1,19 @@
 from lit.command.BaseCommand import BaseCommand
-from lit.file.StringManager import StringManager
+import json
+from lit.strings_holder import StatusStrings, TrackedFileSettings
 
 
 class StatusCommand(BaseCommand):
-    __COMMAND_STATUS_NAME_KEY = 'COMMAND_STATUS_NAME'
-    __COMMAND_STATUS_HELP_KEY = 'COMMAND_STATUS_HELP'
-
     def __init__(self):
-        name = StringManager.get_string(self.__COMMAND_STATUS_NAME_KEY)
-        help_message = StringManager.get_string(self.__COMMAND_STATUS_HELP_KEY)
+        name = StatusStrings.NAME
+        help_message = StatusStrings.HELP
         arguments = []
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
         if not super().run():
             return False
-        raise NotImplementedError()
+        with open(TrackedFileSettings.PATH, 'r') as file:
+            json_data = json.load(file)
+        print('Files in staging area:')
+        print(*json_data['files'], sep='\n')
