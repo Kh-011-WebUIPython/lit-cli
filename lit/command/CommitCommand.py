@@ -29,38 +29,39 @@ class CommitCommand(BaseCommand):
         serializer_tracked = JSONSerializer(TrackedFileSettings.PATH)
         tracked = serializer_tracked.read_all_items()
 
+        zip_file_name = CommitSettings.ZIP_FILE_NAME + CommitSettings.ZIP_EXTENSION
 
-        file_count = len(os.listdir(CommitSettings.DIR_PATH.value))
-        with ZipFile(CommitSettings.ZIP_FILE_NAME + str(file_count) +
-                     CommitSettings.ZIP_EXTENSION, 'w') as myzip:
+        with ZipFile(zip_file_name, 'w') as myzip:
             files_key = TrackedFileSettings.FILES_KEY
             for file in tracked[files_key]:
                 myzip.write(file)
 
         myzip_hash = self.get_file_hash(myzip.filename)
-        message = CommitStrings.Arguments.MSG_NAME.value
+        os.rename(zip_file_name,
+                  zip_file_name[:-8] + str(myzip_hash)[:10] + CommitSettings.ZIP_EXTENSION)
+        message = args[CommitStrings.ARG_MSG_NAME]
         commit = {
             CommitSettings.USER: 'WIP',
             CommitSettings.LONG_HASH: myzip_hash,
-            CommitSettings.COMMIT_SHORT_HASH: myzip_hash[:10],
+            CommitSettings.SHORT_HASH: myzip_hash[:10],
             CommitSettings.DATETIME: str(datetime.utcnow()),
-            CommitSettings.COMMENT: args[message],
+            CommitSettings.COMMENT: message,
         }
 
         myzip.close()
 
-        serializer_commits = JSONSerializer(CommitSettings.LOG_PATH)
+        serializer_commits = JSONSerializer(LogSettings.PATH)
         logs = serializer_commits.read_all_items()
 
-        c = open(CommitSettings.LOG_PATH, 'w')
+        c = open(LogSettings.PATH, 'w')
         log_item = LogSettings.KEY
         logs[log_item].append(commit)
         json.dump(logs, c)
         c.close()
-        with open(SettingsManager.get_var_value('TRACKED_FILE_PATH'), 'r') as file:
+        with open(TrackedFileSettings.PATH, 'r') as file:
             json_data = json.load(file)
         json_data['files'].clear()
-        with open(SettingsManager.get_var_value('TRACKED_FILE_PATH'), 'w') as file:
+        with open(TrackedFileSettings.PATH, 'w') as file:
             json.dump(json_data, file)
 
     def get_file_hash(self, file_name):

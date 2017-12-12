@@ -29,7 +29,7 @@ class AddCommand(BaseCommand):
         else:
             pass
 
-        if file_list == None:
+        if not file_list == None:
             serializer = JSONSerializer(TrackedFileSettings.PATH)
             tracked = serializer.read_all_items()
             self.save_tracked_files(file_list, tracked)
@@ -51,7 +51,7 @@ class AddCommand(BaseCommand):
         return file_list
 
     def save_tracked_files(self, file_list, tracked):
-        b = open(TrackedFileSettings.PATH.value, 'w')
+        b = open(TrackedFileSettings.PATH, 'w')
         for file in file_list:
             files_key = TrackedFileSettings.FILES_KEY
             if file not in tracked[files_key]:

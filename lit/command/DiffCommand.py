@@ -8,7 +8,7 @@ from lit.file.SettingsManager import SettingsManager
 from lit.file.JSONSerializer import JSONSerializer
 import lit.diff.roberteldersoftwarediff as diff
 from lit.command.BaseCommand import BaseCommand, CommandArgument
-from lit.strings_holder import DiffStrings
+from lit.strings_holder import DiffStrings, LogSettings, CommitSettings
 
 
 class DiffCommand(BaseCommand):
@@ -31,14 +31,14 @@ class DiffCommand(BaseCommand):
             return False
 
         # get last commit short hash
-        serializer = JSONSerializer(SettingsManager.get_var_value('COMMIT_LOG_PATH'))
+        serializer = JSONSerializer(LogSettings.PATH)
         commits = serializer.read_all_items()['commits']
         last_commit = commits[len(commits) - 1]
         last_commit_short_hash = last_commit["short_hash"]
 
         # unzip last commit snapshot
         commits_dir_path = os.path.join(lit.paths.DIR_PATH, 'commits')
-        zip_file_name = last_commit_short_hash + SettingsManager.get_var_value('COMMIT_ZIP_EXTENCION')
+        zip_file_name = last_commit_short_hash + CommitSettings.ZIP_EXTENSION
         zip_file_path = os.path.join(commits_dir_path, zip_file_name)
         zip_ref = zipfile.ZipFile(zip_file_path, 'r')
         try:
@@ -50,11 +50,12 @@ class DiffCommand(BaseCommand):
             os.mkdir(extracted_snapshot_path)
         except FileExistsError:
             pass
+        print(extracted_snapshot_path)
         zip_ref.extractall(extracted_snapshot_path)
         zip_ref.close()
 
         # run diff
-        compared_file_name = args[DiffStrings.ARG_PATH_1_NAME.value]
+        compared_file_name = args[DiffStrings.ARG_PATH_1_NAME]
         compared_file_path = os.path.join(os.getcwd(), compared_file_name)
         extracted_file_path = os.path.join(extracted_snapshot_path, compared_file_name)
         diff.main(
