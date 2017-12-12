@@ -7,7 +7,6 @@ from lit.strings_holder import AddStrings, TrackedFileSettings
 
 
 class AddCommand(BaseCommand):
-
     def __init__(self):
         name = AddStrings.NAME
         help_message = AddStrings.HELP

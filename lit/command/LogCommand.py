@@ -1,6 +1,5 @@
 from lit.command.BaseCommand import BaseCommand
 from lit.file.JSONSerializer import JSONSerializer
-
 from lit.strings_holder import LogSettings, LogStrings, CommitSettings
 
 

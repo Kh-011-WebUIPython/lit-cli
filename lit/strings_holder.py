@@ -54,6 +54,10 @@ class StatusStrings(object):
     HELP = 'shows repository state'
 
 
+class DiffSettings(object):
+    TEMP_PATH = '/tmp/lit'
+
+
 class InitSettings(object):
     LIT_DIR = lit.paths.DIR_PATH
     LIT_INITED = 'LIT has been already inited in this directory'

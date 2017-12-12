@@ -1,6 +1,5 @@
-import json
 import os
-
+import json
 from lit.command.BaseCommand import BaseCommand
 from lit.command.BaseCommand import CommandArgument
 from lit.file.JSONSerializer import JSONSerializer

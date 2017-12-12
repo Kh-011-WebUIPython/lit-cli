@@ -2,12 +2,6 @@
 
 import sys
 import argparse
-import lit.paths
-import lit.init_settings
-import lit.init_strings
-from lit.file.JSONSerializer import JSONSerializer
-from lit.file.StringManager import StringManager
-from lit.file.SettingsManager import SettingsManager
 from lit.command.AddCommand import AddCommand
 from lit.command.CommitCommand import CommitCommand
 from lit.command.DiffCommand import DiffCommand
@@ -39,15 +33,6 @@ def main_run(prog_name, desc, commands):
 
 
 def main():
-    strings_serializer = JSONSerializer(lit.paths.STRINGS_PATH)
-    StringManager.init(strings_serializer)
-
-    StringManager.set_strings(lit.init_strings.STRINGS)
-
-    settings_serializer = JSONSerializer(lit.paths.SETTINGS_PATH)
-    SettingsManager.init(settings_serializer)
-
-
     program_name = ProgramStrings.NAME
     description = ProgramStrings.DESCRIPTION
 
