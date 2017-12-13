@@ -12,47 +12,47 @@ class ProgramStrings(object):
 
 class AddStrings(object):
     NAME = 'add'
-    HELP = 'adds files to staging area'
+    HELP = 'add files to staging area'
     ARG_PATH_NAME = 'path'
     ARG_PATH_HELP = 'path to file'
 
 
 class CommitStrings(object):
     NAME = 'commit'
-    HELP = 'commits files from staging area to repository'
+    HELP = 'commit files from staging area to repository'
     ARG_MSG_NAME = 'message'
     ARG_MSG_HELP = 'message which describes commit'
 
 
 class DiffStrings(object):
     NAME = 'diff'
-    HELP = 'adds files to staging area'
-    ARG_PATH_1_NAME = 'first'
-    ARG_PATH_1_HELP = 'path to first file'
+    HELP = 'show changes in file since last commit'
+    ARG_PATH_1_NAME = 'file'
+    ARG_PATH_1_HELP = 'path to file'
     ARG_PATH_2_NAME = 'second'
     ARG_PATH_2_HELP = 'path to second file'
 
 
 class InitStrings(object):
     NAME = 'init'
-    HELP = 'initializes repository in the current directory'
+    HELP = 'initialize repository in the current directory'
 
 
 class LogStrings(object):
     NAME = 'log'
-    HELP = 'shows lit log'
+    HELP = 'show commits history'
 
 
 class RmStrings(object):
     NAME = 'rm'
-    HELP = 'removes files from staging area'
+    HELP = 'remove files from staging area'
     ARG_PATH_NAME = 'path'
     ARG_PATH_HELP = 'path to file'
 
 
 class StatusStrings(object):
     NAME = 'status'
-    HELP = 'shows repository state'
+    HELP = 'show repository state'
 
 
 class InitSettings(object):
