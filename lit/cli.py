@@ -12,10 +12,12 @@ from lit.command.StatusCommand import StatusCommand
 from lit.strings_holder import ProgramStrings
 
 
-def main_run(prog_name, desc, commands):
-    parser = argparse.ArgumentParser(prog=prog_name, description=desc)
-    subparsers_action = parser.add_subparsers()
+def main_run(commands):
+    parser = argparse.ArgumentParser(
+        prog=ProgramStrings.NAME,
+        description=ProgramStrings.DESCRIPTION)
 
+    subparsers_action = parser.add_subparsers()
     subparsers = []
     for command in commands:
         subparser = subparsers_action.add_parser(command.name, help=command.help)
@@ -33,9 +35,6 @@ def main_run(prog_name, desc, commands):
 
 
 def main():
-    program_name = ProgramStrings.NAME
-    description = ProgramStrings.DESCRIPTION
-
     commands = [
         AddCommand(),
         CommitCommand(),
@@ -46,7 +45,7 @@ def main():
         StatusCommand(),
     ]
 
-    main_run(program_name, description, commands)
+    main_run(commands)
 
 
 if __name__ == '__main__':
