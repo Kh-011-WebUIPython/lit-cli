@@ -56,12 +56,13 @@ class StatusStrings(object):
 
 
 class InitSettings(object):
-    LIT_DIR = lit.paths.DIR_PATH
+    LIT_DIR = '.lit'
+    LIT_PATH = os.path.join(os.getcwd(), LIT_DIR)
     LIT_INITED = 'LIT has been already inited in this directory'
 
 
 class DiffSettings(object):
-    TEMP_PATH = os.path.join(InitSettings.LIT_DIR, 'temp')
+    TEMP_PATH = os.path.join(InitSettings.LIT_PATH, 'temp')
 
 
 class TrackedFileSettings(object):

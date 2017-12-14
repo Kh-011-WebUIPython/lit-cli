@@ -23,7 +23,7 @@ class BaseCommand(abc.ABC):
         Returned value:
         True if command succeeded, else returns False
         """
-        if not os.path.exists(InitSettings.LIT_DIR):
+        if not os.path.exists(InitSettings.LIT_PATH):
             print('Error: current directory is not a lit repository')
             return False
         return True
