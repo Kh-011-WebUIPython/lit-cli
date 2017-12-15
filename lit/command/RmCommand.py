@@ -25,37 +25,17 @@ class RmCommand(BaseCommand):
         if not self.check_repo():
             return False
 
-        delete_path = kwargs[RmStrings.ARG_PATH_NAME]
+        path = kwargs[RmStrings.ARG_PATH_NAME]
 
-        (short_name, extension) = os.path.splitext(delete_path)
-
-        tracked_file_path = TrackedFileSettings.FILE_PATH
-        serializer_tracked = JSONSerializer(tracked_file_path)
-        tracked = serializer_tracked.read_all_items()
-
-        if extension == "":
-            delete_list = self.get_file_list(delete_path)
-
-            for file in delete_list:
-                if file in tracked[TrackedFileSettings.FILES_KEY]:
-                    tracked[TrackedFileSettings.FILES_KEY].remove(file)
-
-            b = open(tracked_file_path, 'w')
-            json.dump(tracked, b)
-            b.close()
-
+        if os.path.exists(path):
+            tracked_files_serializer = JSONSerializer(TrackedFileSettings.FILE_PATH)
+            if os.path.isdir(path):
+                tracked_files_serializer.remove_set_from_set_item(
+                    TrackedFileSettings.FILES_KEY,
+                    self.get_files_relative_path_list(path)
+                )
+            else:
+                tracked_files_serializer.remove_from_set_item(TrackedFileSettings.FILES_KEY, path)
+            return True
         else:
-            delete_path = './' + delete_path
-            tracked['files'].remove(delete_path)
-
-            b = open(tracked_file_path, 'w')
-            json.dump(tracked, b)
-            b.close()
-
-    def get_file_list(self, *args):
-        file_list = []
-        for root, dirs, files in os.walk(args[0]):
-            for f in files:
-                path = os.path.join(root, f)
-                file_list.append(path)
-        return file_list
+            return False
