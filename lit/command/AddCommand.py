@@ -1,4 +1,3 @@
-import json
 import os
 
 from lit.command.BaseCommand import BaseCommand, CommandArgument
@@ -25,36 +24,28 @@ class AddCommand(BaseCommand):
         if not self.check_repo():
             return False
 
-        file_name = kwargs[AddStrings.ARG_PATH_NAME]
-        file_path = os.path.join(ProgramSettings.LIT_WORKING_DIRECTORY_PATH, file_name)
-        if os.path.isfile(file_path):
-            JSONSerializer(TrackedFileSettings.FILE_PATH) \
-                .add_to_set_item(TrackedFileSettings.FILES_KEY, file_name)
+        path = kwargs[AddStrings.ARG_PATH_NAME]
+
+        if os.path.exists(path):
+            tracked_files_serializer = JSONSerializer(TrackedFileSettings.FILE_PATH)
+            if os.path.isdir(path):
+                tracked_files_serializer.add_set_to_set_item(
+                    TrackedFileSettings.FILES_KEY,
+                    self.get_files_relative_path_list(path)
+                )
+            else:
+                tracked_files_serializer.add_to_set_item(TrackedFileSettings.FILES_KEY, path)
             return True
-        return False
+        else:
+            return False
 
-    def get_file_list(self, *args):
-        file_list = []
-        for root, dirs, files in os.walk(args[0]):
-            for f in files:
-                path = os.path.join(root, f)
-                if '.lit' not in path:
-                    file_list.append(path)
-
-        return file_list
-
-    def get_file(self, *args):
-        file_list = []
-        path = os.path.join(args[0])
-        file_list.append(path)
-        return file_list
-
-    def save_tracked_files(self, file_list, tracked):
-        b = open(TrackedFileSettings.FILE_PATH, 'w')
-        for file in file_list:
-            files_key = TrackedFileSettings.FILES_KEY
-            if file not in tracked[files_key]:
-                tracked[files_key].append(file)
-        json.dump(tracked, b)
-        b.close()
-        pass
+    @staticmethod
+    def get_files_relative_path_list(starting_dir):
+        file_relative_path_list = []
+        for root, dirs, files in os.walk(starting_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                file_path = os.path.normpath(file_path)
+                if ProgramSettings.LIT_DIR not in file_path:
+                    file_relative_path_list.append(file_path)
+        return file_relative_path_list

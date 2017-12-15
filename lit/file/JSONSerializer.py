@@ -172,6 +172,30 @@ class JSONSerializer(ISerializer):
         with open(self.file_worker.file_path, 'w') as file_object:
             json.dump(json_data, file_object)
 
+    def add_set_to_set_item(self, key, set_value):
+
+        with open(self.file_worker.file_path, 'r') as file_object:
+            json_data = json.load(file_object)
+
+        '''If there is no value assigned with the key, initialize the value with an empty list'''
+        if key not in json_data.keys():
+            json_data[key] = list()
+        elif not isinstance(json_data[key], list):
+            raise exception.JSONValueIsNotListError(key, json_data[key])
+
+        '''Converting to set'''
+        json_data[key] = set(json_data[key])
+
+        for item in set_value:
+            json_data[key].add(item)
+
+        '''Converting to list'''
+        json_data[key] = list(json_data[key])
+
+        '''Writing edited JSON data back to file (overwriting the old data)'''
+        with open(self.file_worker.file_path, 'w') as file_object:
+            json.dump(json_data, file_object)
+
     def get_all_from_set_item(self, key):
         """Reading JSON data from file to temporary variable"""
         with open(self.file_worker.file_path, 'r') as file_object:
