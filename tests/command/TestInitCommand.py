@@ -3,7 +3,7 @@ import os
 import io
 import unittest
 from lit.command.InitCommand import InitCommand
-from lit.strings_holder import ProgramSettings, InitSettings, TrackedFileSettings, LogSettings, CommitSettings
+from lit.strings_holder import ProgramSettings, InitStrings, TrackedFileSettings, LogSettings, CommitSettings
 import tests.util
 
 
@@ -66,7 +66,7 @@ class TestInitCommand(unittest.TestCase):
         self.assertFalse(command.run())
         sys.stdout = stdout
         custom_stdout.seek(0)
-        expected_content = InitSettings.LIT_INITED + '\n'
+        expected_content = InitStrings.LIT_INITED + '\n'
         self.assertEqual(expected_content, custom_stdout.read())
 
         ''' check if files were not modified after calling init command second time '''

@@ -31,7 +31,7 @@ class CommitStrings(object):
 
 class CommitSettings(object):
     DIR_NAME = 'commits'
-    DIR_PATH = os.path.join(ProgramSettings.LIT_DIR, DIR_NAME)
+    DIR_PATH = os.path.join(ProgramSettings.LIT_PATH, DIR_NAME)
     ZIP_FILE_NAME = os.path.join(DIR_PATH, 'hash')
     ZIP_EXTENSION = '.zip'
     USER = 'user'
@@ -57,10 +57,11 @@ class DiffSettings(object):
 class InitStrings(object):
     NAME = 'init'
     HELP = 'initialize repository in the current directory'
+    LIT_INITED = 'LIT repository has been already initialised in this directory'
 
 
 class InitSettings(object):
-    LIT_INITED = 'LIT has been already inited in this directory'
+    pass
 
 
 class LogStrings(object):
@@ -75,7 +76,7 @@ class LogSettings(object):
     COMMIT_USERNAME_STR_NAME = 'Username:'
     COMMIT_DATE_STR_NAME = 'Date:'
     FILE_NAME = 'commits_log.json'
-    FILE_PATH = os.path.join(ProgramSettings.LIT_DIR, FILE_NAME)
+    FILE_PATH = os.path.join(ProgramSettings.LIT_PATH, FILE_NAME)
     INIT_CONTENT = '{"commits":[]}'
     COMMITS_LIST_KEY = 'commits'
     MESSAGE_FORMAT = COMMIT_STR_NAME + ' {0}' + os.linesep \

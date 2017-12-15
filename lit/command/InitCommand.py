@@ -1,8 +1,7 @@
 import os
-import importlib
 from lit.command.BaseCommand import BaseCommand
-from lit.strings_holder import ProgramSettings, CommitSettings, InitStrings, \
-    TrackedFileSettings, LogSettings, InitSettings
+from lit.file.JSONSerializer import JSONSerializer
+from lit.strings_holder import ProgramSettings, CommitSettings, InitStrings, TrackedFileSettings, LogSettings
 
 
 class InitCommand(BaseCommand):
@@ -18,15 +17,15 @@ class InitCommand(BaseCommand):
 
         if not os.path.exists(ProgramSettings.LIT_PATH):
             os.mkdir(ProgramSettings.LIT_PATH)
-            os.mkdir(os.path.join(ProgramSettings.LIT_PATH,
-                                  CommitSettings.DIR_NAME))
-            with open(os.path.join(ProgramSettings.LIT_PATH,
-                                   TrackedFileSettings.FILE_NAME), 'w') as outfile:
-                outfile.write(TrackedFileSettings.INIT_CONTENT)
-            with open(os.path.join(ProgramSettings.LIT_PATH,
-                                   LogSettings.FILE_NAME), 'w') as outfile:
-                outfile.write(LogSettings.INIT_CONTENT)
+            os.mkdir(CommitSettings.DIR_PATH)
+
+            tracked_files_serializer = JSONSerializer(TrackedFileSettings.FILE_PATH)
+            tracked_files_serializer.create_list_item(TrackedFileSettings.FILES_KEY)
+
+            commits_serializer = JSONSerializer(LogSettings.FILE_PATH)
+            commits_serializer.create_list_item(LogSettings.COMMITS_LIST_KEY)
+
             return True
         else:
-            print(InitSettings.LIT_INITED)
+            print(InitStrings.LIT_INITED)
             return False

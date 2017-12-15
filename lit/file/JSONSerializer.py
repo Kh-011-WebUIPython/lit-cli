@@ -17,6 +17,24 @@ class JSONSerializer(ISerializer):
         with open(self.file_worker.file_path, 'w') as file_object:
             json.dump(dict(), file_object)
 
+    def create_list_item(self, key):
+        """Creates list item related to specified key"""
+
+        '''Reading JSON data from file to temporary variable'''
+        with open(self.file_worker.file_path, 'r') as file_object:
+            json_data = json.load(file_object)
+
+        '''If there exists such key, raise an exception'''
+        if key in json_data.keys():
+            raise exception.JSONKeyAlreadyExists(key)
+
+        '''Create a list item assigned to specified key'''
+        json_data[key] = list()
+
+        '''Writing edited JSON data back to file (overwriting the old data)'''
+        with open(self.file_worker.file_path, 'w') as file_object:
+            json.dump(json_data, file_object)
+
     def append_to_list_item(self, key, new_item):
         """Appends value to list item in JSON file"""
 
