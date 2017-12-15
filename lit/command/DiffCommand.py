@@ -26,7 +26,7 @@ class DiffCommand(BaseCommand):
             return False
 
         # get last commit short hash
-        serializer = JSONSerializer(LogSettings.PATH)
+        serializer = JSONSerializer(LogSettings.FILE_PATH)
         commits = serializer.read_all_items()['commits']
         if len(commits) == 0:
             print('No commits found')

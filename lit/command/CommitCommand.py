@@ -28,7 +28,7 @@ class CommitCommand(BaseCommand):
         if not super().run():
             return False
 
-        serializer_tracked = JSONSerializer(TrackedFileSettings.PATH)
+        serializer_tracked = JSONSerializer(TrackedFileSettings.FILE_PATH)
         tracked = serializer_tracked.read_all_items()
         if len(tracked['files']) == 0:
             print('No files in staging area were found')
@@ -54,10 +54,10 @@ class CommitCommand(BaseCommand):
 
         myzip.close()
 
-        serializer_commits = JSONSerializer(LogSettings.PATH)
+        serializer_commits = JSONSerializer(LogSettings.FILE_PATH)
         logs = serializer_commits.read_all_items()
 
-        c = open(LogSettings.PATH, 'w')
+        c = open(LogSettings.FILE_PATH, 'w')
         log_item = LogSettings.KEY
         for item in logs[log_item]:
             if item[CommitSettings.LONG_HASH] == myzip_hash:
@@ -68,10 +68,10 @@ class CommitCommand(BaseCommand):
         logs[log_item].append(commit)
         json.dump(logs, c)
         c.close()
-        with open(TrackedFileSettings.PATH, 'r') as file:
+        with open(TrackedFileSettings.FILE_PATH, 'r') as file:
             json_data = json.load(file)
         json_data['files'].clear()
-        with open(TrackedFileSettings.PATH, 'w') as file:
+        with open(TrackedFileSettings.FILE_PATH, 'w') as file:
             json.dump(json_data, file)
 
     def get_file_hash(self, file_name):

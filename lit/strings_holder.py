@@ -2,12 +2,17 @@
     String constants for lit commands description
 """
 import os
-import lit.paths
 
 
 class ProgramStrings(object):
     NAME = 'lit'
     DESCRIPTION = 'LIT version control system'
+
+
+class ProgramSettings(object):
+    LIT_WORKING_DIRECTORY_PATH = os.getcwd()
+    LIT_DIR = '.lit'
+    LIT_PATH = os.path.join(LIT_WORKING_DIRECTORY_PATH, LIT_DIR)
 
 
 class AddStrings(object):
@@ -24,6 +29,18 @@ class CommitStrings(object):
     ARG_MSG_HELP = 'message which describes commit'
 
 
+class CommitSettings(object):
+    DIR_NAME = 'commits'
+    DIR_PATH = os.path.join(ProgramSettings.LIT_DIR, DIR_NAME)
+    ZIP_FILE_NAME = os.path.join(DIR_PATH, 'hash')
+    ZIP_EXTENSION = '.zip'
+    USER = 'user'
+    LONG_HASH = 'long_hash'
+    SHORT_HASH = 'short_hash'
+    DATETIME = 'datetime'
+    COMMENT = 'comment'
+
+
 class DiffStrings(object):
     NAME = 'diff'
     HELP = 'show changes in file since last commit'
@@ -33,14 +50,33 @@ class DiffStrings(object):
     ARG_PATH_2_HELP = 'path to second file'
 
 
+class DiffSettings(object):
+    TEMP_PATH = os.path.join(ProgramSettings.LIT_PATH, 'temp')
+
+
 class InitStrings(object):
     NAME = 'init'
     HELP = 'initialize repository in the current directory'
 
 
+class InitSettings(object):
+    LIT_INITED = 'LIT has been already inited in this directory'
+
+
 class LogStrings(object):
     NAME = 'log'
     HELP = 'show commits history'
+
+
+class LogSettings(object):
+    COMMIT = 'Commit: '
+    COMMIT_MESSAGE = 'Commit message: '
+    USERNAME = 'Username: '
+    DATE = 'Date: '
+    FILE_NAME = 'commits_log.json'
+    FILE_PATH = os.path.join(ProgramSettings.LIT_DIR, FILE_NAME)
+    INIT_CONTENT = '{"commits":[]}'
+    KEY = "commits"
 
 
 class RmStrings(object):
@@ -55,41 +91,8 @@ class StatusStrings(object):
     HELP = 'show repository state'
 
 
-class InitSettings(object):
-    LIT_DIR = '.lit'
-    LIT_PATH = os.path.join(os.getcwd(), LIT_DIR)
-    LIT_INITED = 'LIT has been already inited in this directory'
-
-
-class DiffSettings(object):
-    TEMP_PATH = os.path.join(InitSettings.LIT_PATH, 'temp')
-
-
 class TrackedFileSettings(object):
-    PATH = '.lit/tracked_files.json'
     FILE_NAME = 'tracked_files.json'
+    FILE_PATH = os.path.join(ProgramSettings.LIT_PATH, FILE_NAME)
     FILES_KEY = 'files'
     INIT_CONTENT = '{"files": []}'
-
-
-class LogSettings(object):
-    COMMIT = 'Commit: '
-    COMMIT_MESSAGE = 'Commit message: '
-    USERNAME = 'Username: '
-    DATE = 'Date: '
-    PATH = '.lit/commits_log.json'
-    FILE_NAME = 'commits_log.json'
-    INIT_CONTENT = '{"commits":[]}'
-    KEY = "commits"
-
-
-class CommitSettings(object):
-    DIR_PATH = '.lit/commits/'
-    DIR_NAME = 'commits'
-    ZIP_FILE_NAME = '.lit/commits/hash'
-    ZIP_EXTENSION = '.zip'
-    USER = 'user'
-    LONG_HASH = 'long_hash'
-    SHORT_HASH = 'short_hash'
-    DATETIME = 'datetime'
-    COMMENT = 'comment'

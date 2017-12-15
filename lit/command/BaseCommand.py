@@ -1,6 +1,6 @@
 import os
 import abc
-from lit.strings_holder import InitSettings
+from lit.strings_holder import ProgramSettings
 
 
 class BaseCommand(abc.ABC):
@@ -11,7 +11,8 @@ class BaseCommand(abc.ABC):
             raise TypeError("'arguments' parameter must be a list of CommandArgument objects")
         for argument in arguments:
             if not isinstance(argument, CommandArgument):
-                raise TypeError("'arguments' parameter must be a list of CommandArgument objects")
+                raise TypeError(
+                    "'arguments' parameter must be a list of CommandArgument objects, not " + str(type(argument)))
         self.__arguments = arguments
 
     @abc.abstractmethod
@@ -23,7 +24,7 @@ class BaseCommand(abc.ABC):
         Returned value:
         True if command succeeded, else returns False
         """
-        if not os.path.exists(InitSettings.LIT_PATH):
+        if not os.path.exists(ProgramSettings.LIT_PATH):
             print('Error: current directory is not a lit repository')
             return False
         return True

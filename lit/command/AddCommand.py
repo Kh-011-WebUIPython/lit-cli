@@ -3,7 +3,7 @@ import os
 
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
-from lit.strings_holder import AddStrings, TrackedFileSettings
+from lit.strings_holder import ProgramSettings, AddStrings, TrackedFileSettings
 
 
 class AddCommand(BaseCommand):
@@ -23,17 +23,14 @@ class AddCommand(BaseCommand):
         if not super().run():
             return False
 
-        path = AddStrings.ARG_PATH_NAME
-        file_list = self.get_file_list(args[path])
-        if file_list == []:
-            file_list = self.get_file(args[path])
-        else:
-            pass
+        file_name = args[AddStrings.ARG_PATH_NAME]
+        file_path = os.path.join(ProgramSettings.LIT_WORKING_DIRECTORY_PATH, file_name)
 
-        if not file_list == None:
-            serializer = JSONSerializer(TrackedFileSettings.PATH)
-            tracked = serializer.read_all_items()
-            self.save_tracked_files(file_list, tracked)
+        if os.path.isfile(file_path):
+            JSONSerializer(TrackedFileSettings.FILE_PATH)\
+                .add_to_set_item(TrackedFileSettings.FILES_KEY, file_name)
+            return True
+        return False
 
     def get_file_list(self, *args):
         file_list = []
@@ -52,7 +49,7 @@ class AddCommand(BaseCommand):
         return file_list
 
     def save_tracked_files(self, file_list, tracked):
-        b = open(TrackedFileSettings.PATH, 'w')
+        b = open(TrackedFileSettings.FILE_PATH, 'w')
         for file in file_list:
             files_key = TrackedFileSettings.FILES_KEY
             if file not in tracked[files_key]:
