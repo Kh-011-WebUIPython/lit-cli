@@ -12,7 +12,7 @@ class InitCommand(BaseCommand):
         arguments = []
         super().__init__(name, help_message, arguments)
 
-    def run(self, **args):
+    def run(self, **kwargs):
         if not super().run():
             return False
 

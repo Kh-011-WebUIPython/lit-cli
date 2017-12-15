@@ -66,17 +66,22 @@ class InitSettings(object):
 class LogStrings(object):
     NAME = 'log'
     HELP = 'show commits history'
+    COMMITS_NOT_FOUND = 'No commits were found'
 
 
 class LogSettings(object):
-    COMMIT = 'Commit: '
-    COMMIT_MESSAGE = 'Commit message: '
-    USERNAME = 'Username: '
-    DATE = 'Date: '
+    COMMIT_STR_NAME = 'Commit:'
+    COMMIT_MESSAGE_STR_NAME = 'Commit message:'
+    COMMIT_USERNAME_STR_NAME = 'Username:'
+    COMMIT_DATE_STR_NAME = 'Date:'
     FILE_NAME = 'commits_log.json'
     FILE_PATH = os.path.join(ProgramSettings.LIT_DIR, FILE_NAME)
     INIT_CONTENT = '{"commits":[]}'
-    KEY = "commits"
+    COMMITS_LIST_KEY = 'commits'
+    MESSAGE_FORMAT = COMMIT_STR_NAME + ' {0}' + os.linesep \
+                     + COMMIT_MESSAGE_STR_NAME + ' {1}' + os.linesep \
+                     + COMMIT_USERNAME_STR_NAME + ' {2}' + os.linesep \
+                     + COMMIT_DATE_STR_NAME + ' {3}' + os.linesep
 
 
 class RmStrings(object):

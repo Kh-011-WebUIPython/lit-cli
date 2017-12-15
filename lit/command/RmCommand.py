@@ -19,13 +19,13 @@ class RmCommand(BaseCommand):
         ]
         super().__init__(name, help_message, arguments)
 
-    def run(self, **args):
+    def run(self, **kwargs):
         if not super().run():
             return False
         if not self.check_repo():
             return False
 
-        delete_path = args[RmStrings.ARG_PATH_NAME]
+        delete_path = kwargs[RmStrings.ARG_PATH_NAME]
 
         (short_name, extension) = os.path.splitext(delete_path)
 

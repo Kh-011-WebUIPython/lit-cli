@@ -24,7 +24,7 @@ class CommitCommand(BaseCommand):
         ]
         super().__init__(name, help_message, arguments)
 
-    def run(self, **args):
+    def run(self, **kwargs):
         if not super().run():
             return False
         if not self.check_repo():
@@ -45,7 +45,7 @@ class CommitCommand(BaseCommand):
         myzip_hash = self.get_file_hash(myzip.filename)
         os.rename(zip_file_name,
                   zip_file_name[:-8] + str(myzip_hash)[:10] + CommitSettings.ZIP_EXTENSION)
-        message = args[CommitStrings.ARG_MSG_NAME]
+        message = kwargs[CommitStrings.ARG_MSG_NAME]
         commit = {
             CommitSettings.USER: 'user',
             CommitSettings.LONG_HASH: myzip_hash,
@@ -60,7 +60,7 @@ class CommitCommand(BaseCommand):
         logs = serializer_commits.read_all_items()
 
         c = open(LogSettings.FILE_PATH, 'w')
-        log_item = LogSettings.KEY
+        log_item = LogSettings.COMMITS_LIST_KEY
         for item in logs[log_item]:
             if item[CommitSettings.LONG_HASH] == myzip_hash:
                 print('There is no changes since last commit')

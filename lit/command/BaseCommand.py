@@ -16,7 +16,7 @@ class BaseCommand(abc.ABC):
         self.__arguments = arguments
 
     @abc.abstractmethod
-    def run(self, **args):
+    def run(self, **kwargs):
         """Abstract method for implementing command's logic.
 
         Arguments:
@@ -27,10 +27,10 @@ class BaseCommand(abc.ABC):
 
         return True
 
-    def run_argparse(self, args):
+    def run_argparse(self, argparse_args):
         """Converts arguments from argparse to suitable form"""
-        args = vars(args)
-        self.run(**args)
+        kwargs = vars(argparse_args)
+        self.run(**kwargs)
 
     @staticmethod
     def check_repo():

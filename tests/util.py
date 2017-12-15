@@ -9,6 +9,7 @@ TEST_FILE_1_CONTENT = 'file 1 content'
 
 TEST_NONEXISTENT_FILE_NAME = 'file_that_does_not_exist.txt'
 
+TEST_COMMIT_1_MESSAGE = 'test commit 1 message'
 
 def clear_dir_content(dir_path):
     for item in os.listdir(dir_path):
