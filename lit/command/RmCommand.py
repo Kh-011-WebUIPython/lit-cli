@@ -27,7 +27,7 @@ class RmCommand(BaseCommand):
 
         (short_name, extension) = os.path.splitext(delete_path)
 
-        tracked_file_path = TrackedFileSettings.PATH
+        tracked_file_path = TrackedFileSettings.FILE_PATH
         serializer_tracked = JSONSerializer(tracked_file_path)
         tracked = serializer_tracked.read_all_items()
 

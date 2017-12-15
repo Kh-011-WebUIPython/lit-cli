@@ -1,42 +1,30 @@
 import sys
 import os
 import io
-import shutil
 import unittest
 from lit.command.InitCommand import InitCommand
-from lit.strings_holder import InitSettings, TrackedFileSettings, LogSettings, CommitSettings
+from lit.strings_holder import ProgramSettings, InitSettings, TrackedFileSettings, LogSettings, CommitSettings
+import tests.util
 
 
 class TestInitCommand(unittest.TestCase):
-    TEST_DIR_PATH = '/tmp/tempramdisk'
 
     @classmethod
     def setUpClass(cls):
-        InitSettings.LIT_PATH = os.path.join(cls.TEST_DIR_PATH, InitSettings.LIT_DIR)
+        ProgramSettings.LIT_PATH = os.path.join(tests.util.TEST_DIR_PATH, ProgramSettings.LIT_DIR)
 
     def setUp(self):
-        if not os.path.isdir(self.TEST_DIR_PATH):
-            raise EnvironmentError('Could not find test dir \'' + self.TEST_DIR_PATH + '\'')
-        if len(os.listdir(self.TEST_DIR_PATH)) != 0:
-            self._cleanup()
+        if not os.path.isdir(tests.util.TEST_DIR_PATH):
+            raise EnvironmentError('Could not find test dir \'' + tests.util.TEST_DIR_PATH + '\'')
+        if len(os.listdir(tests.util.TEST_DIR_PATH)) != 0:
+            tests.util.clear_dir_content(tests.util.TEST_DIR_PATH)
 
     def tearDown(self):
-        self._cleanup()
-
-    def _cleanup(self):
-        """ Removes temporary directory content """
-        for item in os.listdir(self.TEST_DIR_PATH):
-            item_path = os.path.join(self.TEST_DIR_PATH, item)
-            if os.path.isfile(item_path):
-                os.remove(item_path)
-            elif os.path.isdir(item_path):
-                shutil.rmtree(item_path)
-            else:
-                raise RuntimeError
+        tests.util.clear_dir_content(tests.util.TEST_DIR_PATH)
 
     def test_check_dot_lit_dir_content(self):
         InitCommand().run()
-        lit_path = os.path.join(self.TEST_DIR_PATH, InitSettings.LIT_DIR)
+        lit_path = os.path.join(tests.util.TEST_DIR_PATH, ProgramSettings.LIT_DIR)
         self.assertTrue(os.path.isdir(lit_path), lit_path)
         expected_files = {TrackedFileSettings.FILE_NAME, LogSettings.FILE_NAME}
         expected_dirs = {CommitSettings.DIR_NAME}
@@ -70,8 +58,8 @@ class TestInitCommand(unittest.TestCase):
 
         ''' saving repo settings files' last modification timestamps '''
         dir_items_with_mod_time = {}
-        for item in os.listdir(self.TEST_DIR_PATH):
-            item_path = os.path.join(self.TEST_DIR_PATH, item)
+        for item in os.listdir(tests.util.TEST_DIR_PATH):
+            item_path = os.path.join(tests.util.TEST_DIR_PATH, item)
             dir_items_with_mod_time[item_path] = os.path.getmtime(item_path)
 
         ''' calling init command second time, checking console output '''
@@ -82,6 +70,6 @@ class TestInitCommand(unittest.TestCase):
         self.assertEqual(expected_content, custom_stdout.read())
 
         ''' check if files were not modified after calling init command second time '''
-        for item in os.listdir(self.TEST_DIR_PATH):
-            item_path = os.path.join(self.TEST_DIR_PATH, item)
+        for item in os.listdir(tests.util.TEST_DIR_PATH):
+            item_path = os.path.join(tests.util.TEST_DIR_PATH, item)
             self.assertEqual(os.path.getmtime(item_path), dir_items_with_mod_time[item_path])

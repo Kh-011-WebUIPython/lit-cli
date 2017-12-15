@@ -14,7 +14,7 @@ class LogCommand(BaseCommand):
         if not super().run():
             return False
 
-        serializer = JSONSerializer(LogSettings.PATH)
+        serializer = JSONSerializer(LogSettings.FILE_PATH)
         logs = serializer.read_all_items()
         json_commit_print(logs)
 
