@@ -2,29 +2,33 @@ import sys
 import os
 import io
 import unittest
+from tests import util
+
+''' Need to run here to change working directory before strings_holder import '''
+os.chdir(util.TEST_DIR_PATH)
+
 from lit.command.InitCommand import InitCommand
 from lit.strings_holder import ProgramSettings, InitStrings, TrackedFileSettings, LogSettings, CommitSettings
-import tests.util
 
 
 class TestInitCommand(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        ProgramSettings.LIT_PATH = os.path.join(tests.util.TEST_DIR_PATH, ProgramSettings.LIT_DIR)
+        ProgramSettings.LIT_PATH = os.path.join(util.TEST_DIR_PATH, ProgramSettings.LIT_DIR)
 
     def setUp(self):
-        if not os.path.isdir(tests.util.TEST_DIR_PATH):
-            raise EnvironmentError('Could not find test dir \'' + tests.util.TEST_DIR_PATH + '\'')
-        if len(os.listdir(tests.util.TEST_DIR_PATH)) != 0:
-            tests.util.clear_dir_content(tests.util.TEST_DIR_PATH)
+        if not os.path.isdir(util.TEST_DIR_PATH):
+            raise EnvironmentError('Could not find test dir \'' + util.TEST_DIR_PATH + '\'')
+        if len(os.listdir(util.TEST_DIR_PATH)) != 0:
+            util.clear_dir_content(util.TEST_DIR_PATH)
 
     def tearDown(self):
-        tests.util.clear_dir_content(tests.util.TEST_DIR_PATH)
+        util.clear_dir_content(util.TEST_DIR_PATH)
 
     def test_check_dot_lit_dir_content(self):
         self.assertTrue(InitCommand().run())
-        lit_path = os.path.join(tests.util.TEST_DIR_PATH, ProgramSettings.LIT_DIR)
+        lit_path = os.path.join(util.TEST_DIR_PATH, ProgramSettings.LIT_DIR)
         self.assertTrue(os.path.isdir(lit_path), lit_path)
         expected_files = {TrackedFileSettings.FILE_NAME, LogSettings.FILE_NAME}
         expected_dirs = {CommitSettings.DIR_NAME}
@@ -58,8 +62,8 @@ class TestInitCommand(unittest.TestCase):
 
         ''' saving repo settings files' last modification timestamps '''
         dir_items_with_mod_time = {}
-        for item in os.listdir(tests.util.TEST_DIR_PATH):
-            item_path = os.path.join(tests.util.TEST_DIR_PATH, item)
+        for item in os.listdir(util.TEST_DIR_PATH):
+            item_path = os.path.join(util.TEST_DIR_PATH, item)
             dir_items_with_mod_time[item_path] = os.path.getmtime(item_path)
 
         ''' calling init command second time, checking console output '''
@@ -70,6 +74,6 @@ class TestInitCommand(unittest.TestCase):
         self.assertEqual(expected_content, custom_stdout.read())
 
         ''' check if files were not modified after calling init command second time '''
-        for item in os.listdir(tests.util.TEST_DIR_PATH):
-            item_path = os.path.join(tests.util.TEST_DIR_PATH, item)
+        for item in os.listdir(util.TEST_DIR_PATH):
+            item_path = os.path.join(util.TEST_DIR_PATH, item)
             self.assertEqual(os.path.getmtime(item_path), dir_items_with_mod_time[item_path])
