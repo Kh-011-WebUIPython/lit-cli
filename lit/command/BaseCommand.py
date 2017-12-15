@@ -39,6 +39,17 @@ class BaseCommand(abc.ABC):
             return False
         return True
 
+    @staticmethod
+    def get_files_relative_path_list(starting_dir):
+        file_relative_path_list = []
+        for root, dirs, files in os.walk(starting_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                file_path = os.path.normpath(file_path)
+                if ProgramSettings.LIT_DIR not in file_path:
+                    file_relative_path_list.append(file_path)
+        return file_relative_path_list
+
     @property
     def name(self):
         return self.__name
