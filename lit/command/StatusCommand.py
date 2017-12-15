@@ -13,6 +13,8 @@ class StatusCommand(BaseCommand):
     def run(self, **args):
         if not super().run():
             return False
+        if not self.check_repo():
+            return False
 
         with open(TrackedFileSettings.FILE_PATH, 'r') as file:
             json_data = json.load(file)

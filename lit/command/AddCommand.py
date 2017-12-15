@@ -22,12 +22,14 @@ class AddCommand(BaseCommand):
     def run(self, **args):
         if not super().run():
             return False
+        if not self.check_repo():
+            return False
 
         file_name = args[AddStrings.ARG_PATH_NAME]
         file_path = os.path.join(ProgramSettings.LIT_WORKING_DIRECTORY_PATH, file_name)
 
         if os.path.isfile(file_path):
-            JSONSerializer(TrackedFileSettings.FILE_PATH)\
+            JSONSerializer(TrackedFileSettings.FILE_PATH) \
                 .add_to_set_item(TrackedFileSettings.FILES_KEY, file_name)
             return True
         return False

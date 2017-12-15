@@ -27,6 +27,8 @@ class CommitCommand(BaseCommand):
     def run(self, **args):
         if not super().run():
             return False
+        if not self.check_repo():
+            return False
 
         serializer_tracked = JSONSerializer(TrackedFileSettings.FILE_PATH)
         tracked = serializer_tracked.read_all_items()

@@ -13,6 +13,8 @@ class LogCommand(BaseCommand):
     def run(self, **args):
         if not super().run():
             return False
+        if not self.check_repo():
+            return False
 
         serializer = JSONSerializer(LogSettings.FILE_PATH)
         logs = serializer.read_all_items()
