@@ -32,6 +32,14 @@ class JSONDoesNotContainSuchKeyError(JSONError):
         return 'The key ' + self.__key + ' was not found'
 
 
+class JSONKeyAlreadyExists(JSONError):
+    def __init__(self, key):
+        self.__key = key
+
+    def __str__(self):
+        return 'The key ' + self.__key + ' already exists'
+
+
 class SerializerIsNotSetError(Exception):
     def __init__(self):
         pass
