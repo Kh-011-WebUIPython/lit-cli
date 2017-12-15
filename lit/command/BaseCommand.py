@@ -24,15 +24,20 @@ class BaseCommand(abc.ABC):
         Returned value:
         True if command succeeded, else returns False
         """
-        if not os.path.exists(ProgramSettings.LIT_PATH):
-            print('Error: current directory is not a lit repository')
-            return False
+
         return True
 
     def run_argparse(self, args):
         """Converts arguments from argparse to suitable form"""
         args = vars(args)
         self.run(**args)
+
+    @staticmethod
+    def check_repo():
+        if not os.path.exists(ProgramSettings.LIT_PATH):
+            print('Error: current directory is not a lit repository')
+            return False
+        return True
 
     @property
     def name(self):

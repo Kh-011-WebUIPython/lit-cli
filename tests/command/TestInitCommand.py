@@ -23,7 +23,7 @@ class TestInitCommand(unittest.TestCase):
         tests.util.clear_dir_content(tests.util.TEST_DIR_PATH)
 
     def test_check_dot_lit_dir_content(self):
-        InitCommand().run()
+        self.assertTrue(InitCommand().run())
         lit_path = os.path.join(tests.util.TEST_DIR_PATH, ProgramSettings.LIT_DIR)
         self.assertTrue(os.path.isdir(lit_path), lit_path)
         expected_files = {TrackedFileSettings.FILE_NAME, LogSettings.FILE_NAME}
@@ -54,7 +54,7 @@ class TestInitCommand(unittest.TestCase):
 
         ''' creating and running init command '''
         command = InitCommand()
-        command.run()
+        self.assertTrue(command.run())
 
         ''' saving repo settings files' last modification timestamps '''
         dir_items_with_mod_time = {}
@@ -63,7 +63,7 @@ class TestInitCommand(unittest.TestCase):
             dir_items_with_mod_time[item_path] = os.path.getmtime(item_path)
 
         ''' calling init command second time, checking console output '''
-        command.run()
+        self.assertFalse(command.run())
         sys.stdout = stdout
         custom_stdout.seek(0)
         expected_content = InitSettings.LIT_INITED + '\n'

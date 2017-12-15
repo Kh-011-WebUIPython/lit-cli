@@ -1,7 +1,7 @@
 import os
 import importlib
 from lit.command.BaseCommand import BaseCommand
-from lit.strings_holder import ProgramSettings, CommitSettings, InitStrings,\
+from lit.strings_holder import ProgramSettings, CommitSettings, InitStrings, \
     TrackedFileSettings, LogSettings, InitSettings
 
 
@@ -13,6 +13,9 @@ class InitCommand(BaseCommand):
         super().__init__(name, help_message, arguments)
 
     def run(self, **args):
+        if not super().run():
+            return False
+
         if not os.path.exists(ProgramSettings.LIT_PATH):
             os.mkdir(ProgramSettings.LIT_PATH)
             os.mkdir(os.path.join(ProgramSettings.LIT_PATH,
@@ -23,5 +26,7 @@ class InitCommand(BaseCommand):
             with open(os.path.join(ProgramSettings.LIT_PATH,
                                    LogSettings.FILE_NAME), 'w') as outfile:
                 outfile.write(LogSettings.INIT_CONTENT)
+            return True
         else:
             print(InitSettings.LIT_INITED)
+            return False

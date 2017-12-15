@@ -22,6 +22,8 @@ class RmCommand(BaseCommand):
     def run(self, **args):
         if not super().run():
             return False
+        if not self.check_repo():
+            return False
 
         delete_path = args[RmStrings.ARG_PATH_NAME]
 

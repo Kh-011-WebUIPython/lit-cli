@@ -24,6 +24,8 @@ class DiffCommand(BaseCommand):
     def run(self, **args):
         if not super().run():
             return False
+        if not self.check_repo():
+            return False
 
         # get last commit short hash
         serializer = JSONSerializer(LogSettings.FILE_PATH)
