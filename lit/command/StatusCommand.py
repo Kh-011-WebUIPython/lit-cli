@@ -10,7 +10,7 @@ class StatusCommand(BaseCommand):
         arguments = []
         super().__init__(name, help_message, arguments)
 
-    def run(self, **args):
+    def run(self, **kwargs):
         if not super().run():
             return False
         if not self.check_repo():

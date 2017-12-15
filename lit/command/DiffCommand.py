@@ -21,7 +21,7 @@ class DiffCommand(BaseCommand):
         ]
         super().__init__(name, help_message, arguments)
 
-    def run(self, **args):
+    def run(self, **kwargs):
         if not super().run():
             return False
         if not self.check_repo():
@@ -55,7 +55,7 @@ class DiffCommand(BaseCommand):
         zip_ref.close()
 
         # run diff
-        compared_file_name = args[DiffStrings.ARG_PATH_1_NAME]
+        compared_file_name = kwargs[DiffStrings.ARG_PATH_1_NAME]
         compared_file_path = os.path.join(os.getcwd(), compared_file_name)
         extracted_file_path = os.path.join(extracted_snapshot_path, compared_file_name)
         diff.main(
