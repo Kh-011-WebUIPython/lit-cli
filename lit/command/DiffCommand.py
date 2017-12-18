@@ -37,22 +37,7 @@ class DiffCommand(BaseCommand):
         last_commit_short_hash = last_commit["short_hash"]
 
         # unzip last commit snapshot
-        commits_dir_path = os.path.join(lit.paths.DIR_PATH, 'commits')
-        zip_file_name = last_commit_short_hash + CommitSettings.ZIP_EXTENSION
-        zip_file_path = os.path.join(commits_dir_path, zip_file_name)
-        zip_ref = zipfile.ZipFile(zip_file_path, 'r')
-        try:
-            os.mkdir(DiffSettings.TEMP_PATH)
-        except FileExistsError:
-            pass
-        extracted_snapshot_path = os.path.join(DiffSettings.TEMP_PATH, last_commit_short_hash)
-        try:
-            os.mkdir(extracted_snapshot_path)
-        except FileExistsError:
-            pass
-        print(extracted_snapshot_path)
-        zip_ref.extractall(extracted_snapshot_path)
-        zip_ref.close()
+        extracted_snapshot_path = self.unzip_commit_snapshot_to_temp_dir(last_commit_short_hash)
 
         # run diff
         compared_file_name = kwargs[DiffStrings.ARG_PATH_1_NAME]
@@ -67,3 +52,23 @@ class DiffCommand(BaseCommand):
 
         # remove extracted snapshot
         shutil.rmtree(extracted_snapshot_path)
+
+    @staticmethod
+    def unzip_commit_snapshot_to_temp_dir(commit_hash):
+        commits_dir_path = os.path.join(lit.paths.DIR_PATH, 'commits')
+        zip_file_name = commit_hash + CommitSettings.ZIP_EXTENSION
+        zip_file_path = os.path.join(commits_dir_path, zip_file_name)
+        zip_ref = zipfile.ZipFile(zip_file_path, 'r')
+        try:
+            os.mkdir(DiffSettings.TEMP_PATH)
+        except FileExistsError:
+            pass
+        extracted_snapshot_path = os.path.join(DiffSettings.TEMP_PATH, commit_hash)
+        try:
+            os.mkdir(extracted_snapshot_path)
+        except FileExistsError:
+            pass
+        print(extracted_snapshot_path)
+        zip_ref.extractall(extracted_snapshot_path)
+        zip_ref.close()
+        return extracted_snapshot_path
