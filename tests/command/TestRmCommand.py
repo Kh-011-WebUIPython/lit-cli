@@ -1,4 +1,5 @@
 import os
+
 from tests import util
 import unittest
 
@@ -10,6 +11,7 @@ from lit.command.AddCommand import AddCommand
 from lit.command.RmCommand import RmCommand
 from lit.command.InitCommand import InitCommand
 from lit.file.JSONSerializer import JSONSerializer
+import lit.util
 
 
 class TestRmCommand(unittest.TestCase):
@@ -24,7 +26,7 @@ class TestRmCommand(unittest.TestCase):
         })
 
     def tearDown(self):
-        util.clear_dir_content(util.TEST_DIR_PATH)
+        lit.util.clear_dir_content(util.TEST_DIR_PATH)
 
     def test_files_from_staging_area_removal(self):
         self.assertTrue(RmCommand().run(**{

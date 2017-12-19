@@ -13,6 +13,14 @@ class ProgramSettings(object):
     LIT_WORKING_DIRECTORY_PATH = os.getcwd()
     LIT_DIR = '.lit'
     LIT_PATH = os.path.join(LIT_WORKING_DIRECTORY_PATH, LIT_DIR)
+    LIT_SETTINGS_NAME = 'settings.json'
+    LIT_SETTINGS_PATH = os.path.join(LIT_PATH, LIT_SETTINGS_NAME)
+
+    ACTIVE_BRANCH_KEY = 'active_branch'
+    ACTIVE_BRANCH_DEFAULT = 'master'
+
+    USER_NAME_KEY = 'user_name'
+    USER_NAME_DEFAULT = 'user'
 
 
 class AddStrings(object):
@@ -20,6 +28,22 @@ class AddStrings(object):
     HELP = 'add files to staging area'
     ARG_PATH_NAME = 'path'
     ARG_PATH_HELP = 'path to file'
+
+
+class BranchSettings(object):
+    JSON_KEY_NAME = 'branch_name'
+    JSON_FILE_NAME_SUFFIX = '_commits_log.json'
+
+
+class CheckoutStrings(object):
+    NAME = 'checkout'
+    HELP = 'checkout to another branch'
+    ARG_BRANCH_NAME = 'branch'
+    ARG_BRANCH_HELP = 'branch name to checkout'
+
+
+class CheckoutSettings(object):
+    pass
 
 
 class CommitStrings(object):
@@ -32,13 +56,15 @@ class CommitStrings(object):
 class CommitSettings(object):
     DIR_NAME = 'commits'
     DIR_PATH = os.path.join(ProgramSettings.LIT_PATH, DIR_NAME)
-    ZIP_FILE_NAME = os.path.join(DIR_PATH, 'hash')
+    TEMP_ZIP_FILE_NAME = 'hash'
+    TEMP_ZIP_FILE_PATH = os.path.join(DIR_PATH, TEMP_ZIP_FILE_NAME)
     ZIP_EXTENSION = '.zip'
     USER = 'user'
     LONG_HASH = 'long_hash'
     SHORT_HASH = 'short_hash'
     DATETIME = 'datetime'
-    COMMENT = 'comment'
+    MESSAGE = 'message'
+    SHORT_HASH_LENGTH = 10
 
 
 class DiffStrings(object):

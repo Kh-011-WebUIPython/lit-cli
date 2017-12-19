@@ -1,6 +1,7 @@
 import json
 from lit.command.BaseCommand import BaseCommand
-from lit.strings_holder import StatusStrings, TrackedFileSettings
+from lit.strings_holder import StatusStrings, TrackedFileSettings, ProgramSettings
+from lit.file.JSONSerializer import JSONSerializer
 
 
 class StatusCommand(BaseCommand):
@@ -16,6 +17,17 @@ class StatusCommand(BaseCommand):
         if not self.check_repo():
             return False
 
+        self.print_current_branch()
+        self.print_staging_area_content()
+
+    @staticmethod
+    def print_current_branch():
+        settings_serializer = JSONSerializer(ProgramSettings.LIT_SETTINGS_PATH)
+        current_branch = settings_serializer.get_value(ProgramSettings.ACTIVE_BRANCH_KEY)
+        print('Current branch: {0}'.format(current_branch))
+
+    @staticmethod
+    def print_staging_area_content():
         with open(TrackedFileSettings.FILE_PATH, 'r') as file:
             json_data = json.load(file)
         if len(json_data['files']) != 0:

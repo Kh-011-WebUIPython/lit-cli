@@ -6,6 +6,7 @@ import lit.diff.roberteldersoftwarediff as diff
 from lit.file.JSONSerializer import JSONSerializer
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.strings_holder import DiffStrings, LogSettings, CommitSettings, DiffSettings
+import lit.util as util
 
 
 class DiffCommand(BaseCommand):
@@ -55,10 +56,6 @@ class DiffCommand(BaseCommand):
 
     @staticmethod
     def unzip_commit_snapshot_to_temp_dir(commit_hash):
-        commits_dir_path = os.path.join(lit.paths.DIR_PATH, 'commits')
-        zip_file_name = commit_hash + CommitSettings.ZIP_EXTENSION
-        zip_file_path = os.path.join(commits_dir_path, zip_file_name)
-        zip_ref = zipfile.ZipFile(zip_file_path, 'r')
         try:
             os.mkdir(DiffSettings.TEMP_PATH)
         except FileExistsError:
@@ -68,7 +65,5 @@ class DiffCommand(BaseCommand):
             os.mkdir(extracted_snapshot_path)
         except FileExistsError:
             pass
-        print(extracted_snapshot_path)
-        zip_ref.extractall(extracted_snapshot_path)
-        zip_ref.close()
+        util.unzip_commit_snapshot(commit_hash, extracted_snapshot_path)
         return extracted_snapshot_path

@@ -3,6 +3,7 @@
 import sys
 import argparse
 from lit.command.AddCommand import AddCommand
+from lit.command.CheckoutCommand import CheckoutCommand
 from lit.command.CommitCommand import CommitCommand
 from lit.command.DiffCommand import DiffCommand
 from lit.command.InitCommand import InitCommand
@@ -37,6 +38,7 @@ def main_run(commands):
 def main():
     commands = [
         AddCommand(),
+        CheckoutCommand(),
         CommitCommand(),
         DiffCommand(),
         InitCommand(),
