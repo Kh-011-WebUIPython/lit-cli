@@ -30,6 +30,19 @@ class AddStrings(object):
     ARG_PATH_HELP = 'path to file'
 
 
+class BranchStrings(object):
+    NAME = 'branch'
+    HELP = 'manage branch'
+
+    ARG_NAME_NAME = 'name'
+    ARG_NAME_HELP = 'branch name'
+
+    ARG_ACTION_NAME = 'action'
+    ARG_ACTION_HELP = 'action to perform with branch'
+    ARG_ACTION_CHOICE_CREATE = 'create'
+    ARG_ACTION_CHOICE_DELETE = 'delete'
+
+
 class BranchSettings(object):
     JSON_KEY_NAME = 'branch_name'
     JSON_FILE_NAME_SUFFIX = '_commits_log.json'
@@ -65,6 +78,10 @@ class CommitSettings(object):
     DATETIME = 'datetime'
     MESSAGE = 'message'
     SHORT_HASH_LENGTH = 10
+
+
+class CommandStrings(object):
+    RUN_METHOD_ERROR_MESSAGE = 'Command completed with errors'
 
 
 class DiffStrings(object):

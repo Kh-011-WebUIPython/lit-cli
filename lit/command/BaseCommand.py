@@ -1,6 +1,6 @@
 import os
 import abc
-from lit.strings_holder import ProgramSettings
+from lit.strings_holder import ProgramSettings, BranchSettings
 
 
 class BaseCommand(abc.ABC):
@@ -30,7 +30,7 @@ class BaseCommand(abc.ABC):
     def run_argparse(self, argparse_args):
         """Converts arguments from argparse to suitable form"""
         kwargs = vars(argparse_args)
-        self.run(**kwargs)
+        return self.run(**kwargs)
 
     @staticmethod
     def check_repo():
@@ -50,6 +50,22 @@ class BaseCommand(abc.ABC):
                     file_relative_path_list.append(file_path)
         return file_relative_path_list
 
+    @staticmethod
+    def get_all_branches_names():
+        branches_names = []
+        lit_dir_content = os.listdir(ProgramSettings.LIT_PATH)
+        for item in lit_dir_content:
+            item_path = os.path.join(ProgramSettings.LIT_PATH, item)
+            if os.path.isfile(item_path):
+                if item.endswith(BranchSettings.JSON_FILE_NAME_SUFFIX):
+                    branch_name = item[:-len(BranchSettings.JSON_FILE_NAME_SUFFIX)]
+                    branches_names.append(branch_name)
+        return branches_names
+
+    @classmethod
+    def check_if_branch_exists(cls, branch_name):
+        return branch_name in cls.get_all_branches_names()
+
     @property
     def name(self):
         return self.__name
@@ -67,10 +83,11 @@ class BaseCommand(abc.ABC):
 
 
 class CommandArgument():
-    def __init__(self, name, type, help):
+    def __init__(self, name, type, help, choices=None):
         self.__name = name
         self.__type = type
         self.__help = help
+        self.__choices = choices
 
     @property
     def name(self):
@@ -83,3 +100,7 @@ class CommandArgument():
     @property
     def help(self):
         return self.__help
+
+    @property
+    def choices(self):
+        return self.__choices

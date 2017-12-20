@@ -37,6 +37,14 @@ def get_current_branch_name():
     return current_branch_name
 
 
+def get_branch_log_file_name(branch_name):
+    return branch_name + BranchSettings.JSON_FILE_NAME_SUFFIX
+
+
+def get_branch_log_file_path(branch_name):
+    return os.path.join(ProgramSettings.LIT_PATH, get_branch_log_file_name(branch_name))
+
+
 def get_current_branch_log_file_name():
     current_branch_name = get_current_branch_name()
     current_branch_log_file_name = current_branch_name + BranchSettings.JSON_FILE_NAME_SUFFIX
