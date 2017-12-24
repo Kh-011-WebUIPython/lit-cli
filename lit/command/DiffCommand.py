@@ -29,13 +29,13 @@ class DiffCommand(BaseCommand):
             return False
 
         # get last commit short hash
-        serializer = JSONSerializer(LogSettings.FILE_PATH)
-        commits = serializer.read_all_items()['commits']
+        log_file_serializer = JSONSerializer(util.get_current_branch_log_file_path())
+        commits = log_file_serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
         if len(commits) == 0:
-            print('No commits found')
-            return
+            print('No commits were found')
+            return False
         last_commit = commits[len(commits) - 1]
-        last_commit_short_hash = last_commit["short_hash"]
+        last_commit_short_hash = last_commit[CommitSettings.LONG_HASH_KEY][:CommitSettings.SHORT_HASH_LENGTH]
 
         # unzip last commit snapshot
         extracted_snapshot_path = self.unzip_commit_snapshot_to_temp_dir(last_commit_short_hash)
@@ -53,6 +53,7 @@ class DiffCommand(BaseCommand):
 
         # remove extracted snapshot
         shutil.rmtree(extracted_snapshot_path)
+        return True
 
     @staticmethod
     def unzip_commit_snapshot_to_temp_dir(commit_hash):

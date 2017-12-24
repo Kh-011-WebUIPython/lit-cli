@@ -25,14 +25,16 @@ class LogCommand(BaseCommand):
         commits = serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
         self.print_commits_list(commits)
 
+        return True
+
     @staticmethod
     def print_commits_list(commits):
         if len(commits) != 0:
             for commit in commits:
-                short_hash = commit[CommitSettings.LONG_HASH][:CommitSettings.SHORT_HASH_LENGTH]
-                message = commit[CommitSettings.MESSAGE]
-                user = commit[CommitSettings.USER]
-                datetime = commit[CommitSettings.DATETIME]
+                short_hash = commit[CommitSettings.LONG_HASH_KEY][:CommitSettings.SHORT_HASH_LENGTH]
+                message = commit[CommitSettings.MESSAGE_KEY]
+                user = commit[CommitSettings.USER_KEY]
+                datetime = commit[CommitSettings.DATETIME_KEY]
 
                 output = LogSettings.MESSAGE_FORMAT.format(short_hash, message, user, datetime)
                 print(output)

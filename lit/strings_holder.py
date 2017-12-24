@@ -69,15 +69,23 @@ class CommitStrings(object):
 class CommitSettings(object):
     DIR_NAME = 'commits'
     DIR_PATH = os.path.join(ProgramSettings.LIT_PATH, DIR_NAME)
-    TEMP_ZIP_FILE_NAME = 'hash'
-    TEMP_ZIP_FILE_PATH = os.path.join(DIR_PATH, TEMP_ZIP_FILE_NAME)
-    ZIP_EXTENSION = '.zip'
-    USER = 'user'
-    LONG_HASH = 'long_hash'
-    SHORT_HASH = 'short_hash'
-    DATETIME = 'datetime'
-    MESSAGE = 'message'
+    TEMP_FILE_NAME = 'hash'
+    TEMP_FILE_PATH = os.path.join(DIR_PATH, TEMP_FILE_NAME)
+    FILE_EXTENSION = '.zip'
+
+    USER_KEY = 'user'
+    LONG_HASH_KEY = 'long_hash'
+    DATETIME_KEY = 'datetime'
+    MESSAGE_KEY = 'message'
+    FILES_KEY = 'files'
+    FILES_PATH_KEY = 'path'
+    FILES_FILE_HASH_KEY = 'file_hash'
+    FILES_COMMIT_HASH_KEY = 'commit_hash'
+
     SHORT_HASH_LENGTH = 10
+
+    TEMP_DIR_NAME = 'temp'
+    TEMP_DIR_PATH = os.path.join(ProgramSettings.LIT_PATH, TEMP_DIR_NAME)
 
 
 class CommandStrings(object):
@@ -115,17 +123,17 @@ class LogStrings(object):
 
 class LogSettings(object):
     COMMIT_STR_NAME = 'Commit:'
-    COMMIT_MESSAGE_STR_NAME = 'Commit message:'
+    COMMIT_MESSAGE_STR_NAME = 'Message:'
     COMMIT_USERNAME_STR_NAME = 'Username:'
     COMMIT_DATE_STR_NAME = 'Date:'
+    COMMIT_HASH_STR_NAME = 'Hash:'
     FILE_NAME = 'commits_log.json'
     FILE_PATH = os.path.join(ProgramSettings.LIT_PATH, FILE_NAME)
     INIT_CONTENT = '{"commits":[]}'
     COMMITS_LIST_KEY = 'commits'
-    MESSAGE_FORMAT = COMMIT_STR_NAME + ' {0}' + os.linesep \
-                     + COMMIT_MESSAGE_STR_NAME + ' {1}' + os.linesep \
-                     + COMMIT_USERNAME_STR_NAME + ' {2}' + os.linesep \
-                     + COMMIT_DATE_STR_NAME + ' {3}' + os.linesep
+    MESSAGE_FORMAT = ' > ' + '{0: <8}'.format(COMMIT_HASH_STR_NAME) + ' {0}' + os.linesep + \
+                     '   ' + '{0: <8}'.format(COMMIT_MESSAGE_STR_NAME) + ' {1}' + os.linesep + \
+                     '   ' + '{0: <8}'.format(COMMIT_DATE_STR_NAME) + ' {3}'
 
 
 class RmStrings(object):

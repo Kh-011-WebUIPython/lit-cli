@@ -1,6 +1,9 @@
 import os
 import abc
-from lit.strings_holder import ProgramSettings, BranchSettings
+import enum
+from lit.strings_holder import ProgramSettings, BranchSettings, LogSettings, CommitSettings
+from lit.file.JSONSerializer import JSONSerializer
+import lit.util as util
 
 
 class BaseCommand(abc.ABC):
@@ -62,6 +65,59 @@ class BaseCommand(abc.ABC):
                     branches_names.append(branch_name)
         return branches_names
 
+    @staticmethod
+    def get_file_status(file_path):
+        """ unchanged / modified / new """
+
+        current_branch_log_file_path = util.get_current_branch_log_file_path()
+        commits_log_serializer = JSONSerializer(current_branch_log_file_path)
+        commits = commits_log_serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
+        last_commit = commits[len(commits) - 1]
+        files = last_commit[CommitSettings.FILES_KEY]
+        for file in files:
+            if file[CommitSettings.FILES_PATH_KEY] == file_path:
+                file_hash = util.get_file_hash(file_path)
+                if file[CommitSettings.FILES_FILE_HASH_KEY] == file_hash:
+                    return FileStatus.UNCHANGED
+                else:
+                    return FileStatus.MODIFIED
+        return FileStatus.NEW
+
+    @classmethod
+    def get_files_status(cls, except_files=None):
+        if except_files is None:
+            except_files = set()
+        current_branch_log_file_path = util.get_current_branch_log_file_path()
+        commits_log_serializer = JSONSerializer(current_branch_log_file_path)
+        commits = commits_log_serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
+
+        # if there were no commits yet, all files are new
+        if not commits:
+            new_files = set(cls.get_files_relative_path_list('.'))
+            new_files.difference_update(except_files)
+            return set(), set(), new_files
+
+        last_commit = commits[len(commits) - 1]
+        files_from_last_commit = last_commit[CommitSettings.FILES_KEY]
+        files_actual = cls.get_files_relative_path_list('.')
+        new_files = set()
+        modified_files = set()
+        unchanged_files = set()
+        for file_new in files_actual:
+            if file_new in except_files:
+                continue
+            for file_old in files_from_last_commit:
+                if file_old[CommitSettings.FILES_PATH_KEY] == file_new:
+                    file_actual_hash = util.get_file_hash(file_new)
+                    if file_old[CommitSettings.FILES_FILE_HASH_KEY] == file_actual_hash:
+                        unchanged_files.add(file_new)
+                    else:
+                        modified_files.add(file_new)
+                    break
+            else:
+                new_files.add(file_new)
+        return unchanged_files, modified_files, new_files
+
     @classmethod
     def check_if_branch_exists(cls, branch_name):
         return branch_name in cls.get_all_branches_names()
@@ -104,3 +160,9 @@ class CommandArgument():
     @property
     def choices(self):
         return self.__choices
+
+
+class FileStatus(enum.Enum):
+    UNCHANGED = 1
+    MODIFIED = 2
+    NEW = 3

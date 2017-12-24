@@ -59,6 +59,7 @@ class BranchCommand(BaseCommand):
         if cls.check_if_branch_exists(branch_name):
             print('Branch \'{0}\' already exists'.format(branch_name))
             return False
+        # TODO add copying logs from parent branch
         new_branch_log_file_name = branch_name + BranchSettings.JSON_FILE_NAME_SUFFIX
         new_branch_log_file_path = os.path.join(ProgramSettings.LIT_PATH, new_branch_log_file_name)
         new_branch_log_serializer = JSONSerializer(new_branch_log_file_path)

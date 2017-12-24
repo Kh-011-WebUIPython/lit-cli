@@ -24,7 +24,7 @@ def unzip_commit_snapshot(commit_hash, extract_to):
     if not os.path.exists(extract_to):
         raise FileNotFoundError('Dir \'' + extract_to + '\' not found')
     commits_dir_path = os.path.join(lit.paths.DIR_PATH, 'commits')
-    zip_file_name = commit_hash + CommitSettings.ZIP_EXTENSION
+    zip_file_name = commit_hash + CommitSettings.FILE_EXTENSION
     zip_file_path = os.path.join(commits_dir_path, zip_file_name)
     zip_ref = zipfile.ZipFile(zip_file_path, 'r')
     zip_ref.extractall(extract_to)
@@ -72,8 +72,23 @@ def get_last_commit_hash_in_branch(branch_name):
         return None
     # TODO sort commits list by date
     last_commit = commits[len(commits) - 1]
-    last_commit_short_hash = last_commit[CommitSettings.LONG_HASH][:CommitSettings.SHORT_HASH_LENGTH]
+    last_commit_short_hash = last_commit[CommitSettings.LONG_HASH_KEY][:CommitSettings.SHORT_HASH_LENGTH]
     return last_commit_short_hash
+
+
+def get_last_commit_hash():
+    current_branch_name = get_current_branch_name()
+    return get_last_commit_hash_in_branch(current_branch_name)
+
+
+def get_last_commit_log():
+    current_branch_log_file_path = get_current_branch_log_file_path()
+    serializer = JSONSerializer(current_branch_log_file_path)
+    commits = serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
+    if not commits:
+        return None
+    last_commit = commits[len(commits) - 1]
+    return last_commit
 
 
 def get_file_hash(file_path):

@@ -39,10 +39,10 @@ class TestLogCommand(unittest.TestCase):
         serializer = JSONSerializer(lit.util.get_current_branch_log_file_path())
         commits = serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
         self.assertEqual(1, len(commits))
-        commit_short_hash = commits[0][CommitSettings.LONG_HASH][:CommitSettings.SHORT_HASH_LENGTH]
-        commit_message = commits[0][CommitSettings.MESSAGE]
-        commit_user = commits[0][CommitSettings.USER]
-        commit_datetime = commits[0][CommitSettings.DATETIME]
+        commit_short_hash = commits[0][CommitSettings.LONG_HASH_KEY][:CommitSettings.SHORT_HASH_LENGTH]
+        commit_message = commits[0][CommitSettings.MESSAGE_KEY]
+        commit_user = commits[0][CommitSettings.USER_KEY]
+        commit_datetime = commits[0][CommitSettings.DATETIME_KEY]
         expected_output = LogSettings.MESSAGE_FORMAT.format(
             commit_short_hash, commit_message, commit_user, commit_datetime) + os.linesep
         actual_output = self.get_stdout_content()

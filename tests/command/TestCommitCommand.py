@@ -42,10 +42,10 @@ class TestCommitCommand(unittest.TestCase):
         self.assertEqual(1, len(commits))
         archives = os.listdir(CommitSettings.DIR_PATH)
         self.assertEqual(1, len(archives))
-        self.assertEqual(commits[0][CommitSettings.LONG_HASH][:CommitSettings.SHORT_HASH_LENGTH]
-                         + CommitSettings.ZIP_EXTENSION, archives[0])
+        self.assertEqual(commits[0][CommitSettings.LONG_HASH_KEY][:CommitSettings.SHORT_HASH_LENGTH]
+                         + CommitSettings.FILE_EXTENSION, archives[0])
         extracted_path = DiffCommand.unzip_commit_snapshot_to_temp_dir(
-            commits[0][CommitSettings.LONG_HASH][:CommitSettings.SHORT_HASH_LENGTH])
+            commits[0][CommitSettings.LONG_HASH_KEY][:CommitSettings.SHORT_HASH_LENGTH])
         extracted_files = os.listdir(extracted_path)
         print('listdir: ' + str(os.listdir('/tmp/tempramdisk/')))
         self.assertEqual(2, len(extracted_files), 'extracted path: ' + extracted_path + os.linesep
