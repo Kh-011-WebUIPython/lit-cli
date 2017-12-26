@@ -56,7 +56,8 @@ class CheckoutStrings(object):
 
 
 class CheckoutSettings(object):
-    pass
+    TEMP_DIR_NAME = 'checkout_temp'
+    TEMP_DIR_PATH = os.path.join(ProgramSettings.LIT_PATH, TEMP_DIR_NAME)
 
 
 class CommitStrings(object):

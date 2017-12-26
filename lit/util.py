@@ -20,11 +20,16 @@ def clear_dir_content(dir_path, except_dirs=()):
             raise RuntimeError('Unknown type of object {0}'.format(item))
 
 
-def unzip_commit_snapshot(commit_hash, extract_to):
+def unzip_commit_snapshot(commit_short_hash, extract_to):
+    # TODO implement
+    raise NotImplementedError
+
+
+def unzip_commit(commit_short_hash, extract_to):
     if not os.path.exists(extract_to):
         raise FileNotFoundError('Dir \'' + extract_to + '\' not found')
     commits_dir_path = os.path.join(lit.paths.DIR_PATH, 'commits')
-    zip_file_name = commit_hash + CommitSettings.FILE_EXTENSION
+    zip_file_name = commit_short_hash + CommitSettings.FILE_EXTENSION
     zip_file_path = os.path.join(commits_dir_path, zip_file_name)
     zip_ref = zipfile.ZipFile(zip_file_path, 'r')
     zip_ref.extractall(extract_to)
@@ -72,8 +77,8 @@ def get_last_commit_hash_in_branch(branch_name):
         return None
     # TODO sort commits list by date
     last_commit = commits[len(commits) - 1]
-    last_commit_short_hash = last_commit[CommitSettings.LONG_HASH_KEY][:CommitSettings.SHORT_HASH_LENGTH]
-    return last_commit_short_hash
+    last_commit_hash = last_commit[CommitSettings.LONG_HASH_KEY]
+    return last_commit_hash
 
 
 def get_last_commit_hash():

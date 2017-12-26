@@ -1,5 +1,5 @@
 import os
-
+import shutil
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
 from lit.strings_holder import ProgramSettings, BranchStrings, LogSettings, CheckoutStrings, \
@@ -37,34 +37,36 @@ class BranchCommand(BaseCommand):
         if not self.check_repo():
             return False
 
-        branch_name = kwargs[BranchStrings.ARG_NAME_NAME]
+        new_branch_name = kwargs[BranchStrings.ARG_NAME_NAME]
         action = kwargs[BranchStrings.ARG_ACTION_NAME]
 
         # TODO add branch list command
 
+        settings_serializer = JSONSerializer(ProgramSettings.LIT_SETTINGS_PATH)
+        active_branch_name = settings_serializer.get_value(ProgramSettings.ACTIVE_BRANCH_KEY)
+
         if action == BranchStrings.ARG_ACTION_CHOICE_CREATE:
-            return self.create_branch(branch_name)
+            return self.create_branch(new_branch_name, active_branch_name)
         elif action == BranchStrings.ARG_ACTION_CHOICE_DELETE:
-            settings_serializer = JSONSerializer(ProgramSettings.LIT_SETTINGS_PATH)
-            active_branch_name = settings_serializer.get_value(ProgramSettings.ACTIVE_BRANCH_KEY)
-            if branch_name == active_branch_name:
+            if new_branch_name == active_branch_name:
                 print('Cannot delete active branch \'{0}\''.format(active_branch_name))
                 return False
-            return self.delete_branch(branch_name)
+            return self.delete_branch(new_branch_name)
         else:
             return False
 
     @classmethod
-    def create_branch(cls, branch_name):
-        if cls.check_if_branch_exists(branch_name):
-            print('Branch \'{0}\' already exists'.format(branch_name))
+    def create_branch(cls, new_branch_name, active_branch_name):
+        if cls.check_if_branch_exists(new_branch_name):
+            print('Branch \'{0}\' already exists'.format(new_branch_name))
             return False
-        # TODO add copying logs from parent branch
-        new_branch_log_file_name = branch_name + BranchSettings.JSON_FILE_NAME_SUFFIX
-        new_branch_log_file_path = os.path.join(ProgramSettings.LIT_PATH, new_branch_log_file_name)
-        new_branch_log_serializer = JSONSerializer(new_branch_log_file_path)
-        new_branch_log_serializer.create_list_item(LogSettings.COMMITS_LIST_KEY)
-        print('Branch \'{0}\' has been created successfully'.format(branch_name))
+
+        old_branch_log_file_path = util.get_branch_log_file_path(active_branch_name)
+        new_branch_log_file_path = util.get_branch_log_file_path(new_branch_name)
+
+        shutil.copy(old_branch_log_file_path, new_branch_log_file_path)
+
+        print('Branch \'{0}\' has been created successfully'.format(new_branch_name))
         return True
 
     @classmethod
