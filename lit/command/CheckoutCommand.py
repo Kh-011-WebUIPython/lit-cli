@@ -120,7 +120,8 @@ class CheckoutCommand(BaseCommand):
                 shutil.move(move_from, move_to)
 
             # clear temp dir content
-            util.clear_dir_content(CheckoutSettings.TEMP_DIR_PATH)
+            # util.clear_dir_content(CheckoutSettings.TEMP_DIR_PATH)
+            shutil.rmtree(CheckoutSettings.TEMP_DIR_PATH)
 
         # ''' If last_commit_hash is not None, restore last commit content '''
         # if last_commit_short_hash:

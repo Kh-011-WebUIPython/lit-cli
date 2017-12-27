@@ -20,9 +20,36 @@ def clear_dir_content(dir_path, except_dirs=()):
             raise RuntimeError('Unknown type of object {0}'.format(item))
 
 
-def unzip_commit_snapshot(commit_short_hash, extract_to):
-    # TODO implement
-    raise NotImplementedError
+def unzip_file_from_commit(commit_hash, file_path, extract_to):
+    commits_log_serializer = JSONSerializer(get_current_branch_log_file_path())
+    commits = commits_log_serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
+
+    # if commits list is not empty
+    if commits:
+
+        # find commit with necessary hash
+        for commit in commits:
+            if commit[CommitSettings.LONG_HASH_KEY] == commit_hash:
+                commit_files = commit[CommitSettings.FILES_KEY]
+
+                # find necessary file in commit
+                for file in commit_files:
+                    if file[CommitSettings.FILES_PATH_KEY] == file_path:
+
+                        # get commit archive path
+                        commit_short_hash_with_file = \
+                            file[CommitSettings.FILES_COMMIT_HASH_KEY][:CommitSettings.SHORT_HASH_LENGTH]
+                        commit_file_name = commit_short_hash_with_file + CommitSettings.FILE_EXTENSION
+                        commit_file_path = os.path.join(CommitSettings.DIR_PATH, commit_file_name)
+
+                        # unpack necessary file from archive
+                        with zipfile.ZipFile(commit_file_path, 'r') as zip_ref:
+                            zip_ref.extract(file[CommitSettings.FILES_PATH_KEY], path=extract_to)
+
+                        # return unpacked file path
+                        extracted_file_path = os.path.join(extract_to, file[CommitSettings.FILES_PATH_KEY])
+                        return extracted_file_path
+    return None
 
 
 def unzip_commit(commit_short_hash, extract_to):
