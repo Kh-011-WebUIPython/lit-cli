@@ -42,11 +42,16 @@ class CommitCommand(BaseCommand):
             print('No files in staging area were found')
             return False
 
-        unchanged_files, modified_files, new_files = self.get_files_status()
-        if not modified_files and not new_files:
+        # TODO check for deleted files
+
+        unchanged_files, modified_files, new_files, deleted_files = self.get_files_status()
+        if not modified_files and not new_files and not deleted_files:
             print('There are no changes since last commit')
             tracked_files_serializer.remove_all_from_list_item(TrackedFileSettings.FILES_KEY)
             return False
+
+        # TODO do not generate archive if there are only deleted files
+        # TODO resolve 2 calls to get_files_status() method
 
         temp_zip_file_name = CommitSettings.TEMP_FILE_PATH + CommitSettings.FILE_EXTENSION
         temp_zip_file_path = os.path.join(CommitSettings.DIR_PATH, temp_zip_file_name)
@@ -96,7 +101,7 @@ class CommitCommand(BaseCommand):
         not_tracked_files = all_files_set.difference(tracked_files_set)
 
         if not_tracked_files:
-            unchanged_files, modified_files, new_files = self.get_files_status(except_files=tracked_files_set)
+            unchanged_files, modified_files, new_files, deleted_files = self.get_files_status(except_files=tracked_files_set)
 
             if unchanged_files or modified_files:
 

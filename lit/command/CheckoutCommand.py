@@ -38,9 +38,9 @@ class CheckoutCommand(BaseCommand):
             return False
 
         # if files were modified, abort checkout
-        unchanged_files, modified_files, new_files = self.get_files_status()
-        if modified_files or new_files:
-            print('There are modified or new files since last commit, checkout canceled')
+        unchanged_files, modified_files, new_files, deleted_files = self.get_files_status()
+        if modified_files or new_files or deleted_files:
+            print('There are modified, new or deleted files since last commit, checkout canceled')
             return False
 
         # check if branch exists

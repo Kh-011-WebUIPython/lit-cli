@@ -100,6 +100,9 @@ class BaseCommand(abc.ABC):
         last_commit = commits[len(commits) - 1]
         files_from_last_commit = last_commit[CommitSettings.FILES_KEY]
         files_actual = cls.get_files_relative_path_list('.')
+        deleted_files = []
+        for file in files_from_last_commit:
+            deleted_files.append(file[CommitSettings.FILES_PATH_KEY])
         new_files = set()
         modified_files = set()
         unchanged_files = set()
@@ -113,10 +116,11 @@ class BaseCommand(abc.ABC):
                         unchanged_files.add(file_new)
                     else:
                         modified_files.add(file_new)
+                    deleted_files.remove(file_new)
                     break
             else:
                 new_files.add(file_new)
-        return unchanged_files, modified_files, new_files
+        return unchanged_files, modified_files, new_files, deleted_files
 
     @classmethod
     def check_if_branch_exists(cls, branch_name):

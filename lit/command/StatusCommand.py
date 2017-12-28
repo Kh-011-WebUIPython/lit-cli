@@ -40,7 +40,7 @@ class StatusCommand(BaseCommand):
             for file in files:
                 print(' > {0}'.format(file))
 
-        unchanged_files, modified_files, new_files = cls.get_files_status(except_files=files)
+        unchanged_files, modified_files, new_files, deleted_files = cls.get_files_status(except_files=files)
 
         if modified_files:
             print('Modified files:')
@@ -51,3 +51,8 @@ class StatusCommand(BaseCommand):
             print('Untracked files:')
             for file in new_files:
                 print(' + {0}'.format(file))
+
+        if deleted_files:
+            print('Deleted files:')
+            for file in deleted_files:
+                print(' - {0}'.format(file))
