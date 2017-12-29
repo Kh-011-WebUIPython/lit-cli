@@ -2,9 +2,7 @@ import os
 import shutil
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
-from lit.strings_holder import ProgramSettings, BranchStrings, LogSettings, CheckoutStrings, \
-    BranchSettings, CommitSettings, TrackedFileSettings
-from lit.command.exception import BranchNameNotFoundError
+from lit.strings_holder import ProgramSettings, BranchStrings
 import lit.util as util
 
 

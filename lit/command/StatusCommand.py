@@ -1,5 +1,3 @@
-import os
-import json
 from lit.command.BaseCommand import BaseCommand
 from lit.strings_holder import StatusStrings, TrackedFileSettings, ProgramSettings
 from lit.file.JSONSerializer import JSONSerializer

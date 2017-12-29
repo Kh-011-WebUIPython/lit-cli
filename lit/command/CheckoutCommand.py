@@ -3,9 +3,8 @@ import shutil
 import zipfile
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
-from lit.strings_holder import ProgramSettings, AddStrings, LogSettings, CheckoutStrings, \
-    BranchSettings, CommitSettings, TrackedFileSettings, CheckoutSettings
-from lit.command.exception import BranchNameNotFoundError
+from lit.strings_holder import ProgramSettings, LogSettings, CheckoutStrings, \
+    CommitSettings, TrackedFileSettings, CheckoutSettings
 import lit.util as util
 
 

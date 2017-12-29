@@ -1,16 +1,11 @@
-import hashlib
-import json
 import os
 from datetime import datetime
 import zipfile
-
-from lit.command.BaseCommand import BaseCommand, CommandArgument, FileStatus
+from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
-import hashlib
 import lit.paths
 import lit.util as util
-from lit.strings_holder import CommitStrings, TrackedFileSettings, CommitSettings, \
-    LogSettings, ProgramSettings, BranchSettings
+from lit.strings_holder import CommitStrings, TrackedFileSettings, CommitSettings, LogSettings
 
 
 class CommitCommand(BaseCommand):
@@ -38,20 +33,17 @@ class CommitCommand(BaseCommand):
         tracked_files_serializer = JSONSerializer(TrackedFileSettings.FILE_PATH)
         tracked_files_set = tracked_files_serializer.get_all_from_set_item(
             TrackedFileSettings.FILES_KEY)
-        if not tracked_files_set:
+
+        unchanged_files, modified_files, new_files, deleted_files = self.get_files_status()
+
+        if not tracked_files_set and not deleted_files:
             print('No files in staging area were found')
             return False
 
-        # TODO check for deleted files
-
-        unchanged_files, modified_files, new_files, deleted_files = self.get_files_status()
         if not modified_files and not new_files and not deleted_files:
             print('There are no changes since last commit')
             tracked_files_serializer.remove_all_from_list_item(TrackedFileSettings.FILES_KEY)
             return False
-
-        # TODO do not generate archive if there are only deleted files
-        # TODO resolve 2 calls to get_files_status() method
 
         temp_zip_file_name = CommitSettings.TEMP_FILE_PATH + CommitSettings.FILE_EXTENSION
         temp_zip_file_path = os.path.join(CommitSettings.DIR_PATH, temp_zip_file_name)
@@ -74,34 +66,41 @@ class CommitCommand(BaseCommand):
                         break
             tracked_files_set = set(new_tracked_files_list)
 
-        with zipfile.ZipFile(temp_zip_file_path, 'w') as zip_file_ref:
-            for file_name in tracked_files_set:
-                zip_file_ref.write(file_name)
-
-        zip_file_hash = util.get_file_hash(temp_zip_file_path)
-
-        ''' Change snapshot file name from temporary to permanent '''
-        zip_file_name = str(zip_file_hash)[:CommitSettings.SHORT_HASH_LENGTH] + CommitSettings.FILE_EXTENSION
-        zip_file_path = os.path.join(CommitSettings.DIR_PATH, zip_file_name)
-        os.rename(temp_zip_file_path, zip_file_path)
-
         commit_message = kwargs[CommitStrings.ARG_MSG_NAME]
+
+        commit_files_items_list = []
+
+        zip_file_hash = "0"
+
+        # if there are files to zip (changed/new files in staging area)
+        if tracked_files_set:
+            with zipfile.ZipFile(temp_zip_file_path, 'w') as zip_file_ref:
+                for file_name in tracked_files_set:
+                    zip_file_ref.write(file_name)
+
+            zip_file_hash = util.get_file_hash(temp_zip_file_path)
+
+            ''' Change snapshot file name from temporary to permanent '''
+            zip_file_name = str(zip_file_hash)[:CommitSettings.SHORT_HASH_LENGTH] + CommitSettings.FILE_EXTENSION
+            zip_file_path = os.path.join(CommitSettings.DIR_PATH, zip_file_name)
+            os.rename(temp_zip_file_path, zip_file_path)
+
+            for file_path in tracked_files_set:
+                file_hash = util.get_file_hash(file_path)
+                file_item = {
+                    CommitSettings.FILES_PATH_KEY: file_path,
+                    CommitSettings.FILES_FILE_HASH_KEY: file_hash,
+                    CommitSettings.FILES_COMMIT_HASH_KEY: zip_file_hash,
+                }
+                commit_files_items_list.append(file_item)
 
         all_files_set = set(self.get_files_relative_path_list('.'))
 
-        commit_files_items_list = []
-        for file_path in tracked_files_set:
-            file_hash = util.get_file_hash(file_path)
-            file_item = {
-                CommitSettings.FILES_PATH_KEY: file_path,
-                CommitSettings.FILES_FILE_HASH_KEY: file_hash,
-                CommitSettings.FILES_COMMIT_HASH_KEY: zip_file_hash,
-            }
-            commit_files_items_list.append(file_item)
         not_tracked_files = all_files_set.difference(tracked_files_set)
 
         if not_tracked_files:
-            unchanged_files, modified_files, new_files, deleted_files = self.get_files_status(except_files=tracked_files_set)
+            unchanged_files, modified_files, new_files, deleted_files = self.get_files_status(
+                except_files=tracked_files_set)
 
             if unchanged_files or modified_files:
 

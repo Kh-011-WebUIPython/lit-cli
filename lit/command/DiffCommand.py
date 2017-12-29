@@ -1,7 +1,5 @@
 import os
 import shutil
-import zipfile
-import lit.paths
 import lit.diff.roberteldersoftwarediff as diff
 from lit.file.JSONSerializer import JSONSerializer
 from lit.command.BaseCommand import BaseCommand, CommandArgument

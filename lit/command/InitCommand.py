@@ -1,7 +1,8 @@
 import os
 from lit.command.BaseCommand import BaseCommand
 from lit.file.JSONSerializer import JSONSerializer
-from lit.strings_holder import ProgramSettings, CommitSettings, InitStrings, TrackedFileSettings, LogSettings, BranchSettings
+from lit.strings_holder import ProgramSettings, CommitSettings, InitStrings, \
+    TrackedFileSettings, LogSettings, BranchSettings
 
 
 class InitCommand(BaseCommand):

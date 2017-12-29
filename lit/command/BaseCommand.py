@@ -76,11 +76,14 @@ class BaseCommand(abc.ABC):
         files = last_commit[CommitSettings.FILES_KEY]
         for file in files:
             if file[CommitSettings.FILES_PATH_KEY] == file_path:
-                file_hash = util.get_file_hash(file_path)
-                if file[CommitSettings.FILES_FILE_HASH_KEY] == file_hash:
-                    return FileStatus.UNCHANGED
+                if os.path.isfile(file_path):
+                    file_hash = util.get_file_hash(file_path)
+                    if file[CommitSettings.FILES_FILE_HASH_KEY] == file_hash:
+                        return FileStatus.UNCHANGED
+                    else:
+                        return FileStatus.MODIFIED
                 else:
-                    return FileStatus.MODIFIED
+                    return FileStatus.DELETED
         return FileStatus.NEW
 
     @classmethod
@@ -102,7 +105,9 @@ class BaseCommand(abc.ABC):
         files_actual = cls.get_files_relative_path_list('.')
         deleted_files = []
         for file in files_from_last_commit:
-            deleted_files.append(file[CommitSettings.FILES_PATH_KEY])
+            file_path = file[CommitSettings.FILES_PATH_KEY]
+            if file_path not in except_files:
+                deleted_files.append(file_path)
         new_files = set()
         modified_files = set()
         unchanged_files = set()
@@ -170,3 +175,4 @@ class FileStatus(enum.Enum):
     UNCHANGED = 1
     MODIFIED = 2
     NEW = 3
+    DELETED = 4
