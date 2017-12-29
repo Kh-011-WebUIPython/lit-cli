@@ -13,6 +13,14 @@ class ProgramSettings(object):
     LIT_WORKING_DIRECTORY_PATH = os.getcwd()
     LIT_DIR = '.lit'
     LIT_PATH = os.path.join(LIT_WORKING_DIRECTORY_PATH, LIT_DIR)
+    LIT_SETTINGS_NAME = 'settings.json'
+    LIT_SETTINGS_PATH = os.path.join(LIT_PATH, LIT_SETTINGS_NAME)
+
+    ACTIVE_BRANCH_KEY = 'active_branch'
+    ACTIVE_BRANCH_DEFAULT = 'master'
+
+    USER_NAME_KEY = 'user_name'
+    USER_NAME_DEFAULT = 'user'
 
 
 class AddStrings(object):
@@ -20,6 +28,36 @@ class AddStrings(object):
     HELP = 'add files to staging area'
     ARG_PATH_NAME = 'path'
     ARG_PATH_HELP = 'path to file'
+
+
+class BranchStrings(object):
+    NAME = 'branch'
+    HELP = 'manage branch'
+
+    ARG_NAME_NAME = 'name'
+    ARG_NAME_HELP = 'branch name'
+
+    ARG_ACTION_NAME = 'action'
+    ARG_ACTION_HELP = 'action to perform with branch'
+    ARG_ACTION_CHOICE_CREATE = 'create'
+    ARG_ACTION_CHOICE_DELETE = 'delete'
+
+
+class BranchSettings(object):
+    JSON_KEY_NAME = 'branch_name'
+    JSON_FILE_NAME_SUFFIX = '_commits_log.json'
+
+
+class CheckoutStrings(object):
+    NAME = 'checkout'
+    HELP = 'checkout to another branch'
+    ARG_BRANCH_NAME = 'branch'
+    ARG_BRANCH_HELP = 'branch name to checkout'
+
+
+class CheckoutSettings(object):
+    TEMP_DIR_NAME = 'checkout_temp'
+    TEMP_DIR_PATH = os.path.join(ProgramSettings.LIT_PATH, TEMP_DIR_NAME)
 
 
 class CommitStrings(object):
@@ -32,13 +70,27 @@ class CommitStrings(object):
 class CommitSettings(object):
     DIR_NAME = 'commits'
     DIR_PATH = os.path.join(ProgramSettings.LIT_PATH, DIR_NAME)
-    ZIP_FILE_NAME = os.path.join(DIR_PATH, 'hash')
-    ZIP_EXTENSION = '.zip'
-    USER = 'user'
-    LONG_HASH = 'long_hash'
-    SHORT_HASH = 'short_hash'
-    DATETIME = 'datetime'
-    COMMENT = 'comment'
+    TEMP_FILE_NAME = 'hash'
+    TEMP_FILE_PATH = os.path.join(DIR_PATH, TEMP_FILE_NAME)
+    FILE_EXTENSION = '.zip'
+
+    USER_KEY = 'user'
+    LONG_HASH_KEY = 'long_hash'
+    DATETIME_KEY = 'datetime'
+    MESSAGE_KEY = 'message'
+    FILES_KEY = 'files'
+    FILES_PATH_KEY = 'path'
+    FILES_FILE_HASH_KEY = 'file_hash'
+    FILES_COMMIT_HASH_KEY = 'commit_hash'
+
+    SHORT_HASH_LENGTH = 10
+
+    TEMP_DIR_NAME = 'temp'
+    TEMP_DIR_PATH = os.path.join(ProgramSettings.LIT_PATH, TEMP_DIR_NAME)
+
+
+class CommandStrings(object):
+    RUN_METHOD_ERROR_MESSAGE = 'Command completed with errors'
 
 
 class DiffStrings(object):
@@ -72,17 +124,17 @@ class LogStrings(object):
 
 class LogSettings(object):
     COMMIT_STR_NAME = 'Commit:'
-    COMMIT_MESSAGE_STR_NAME = 'Commit message:'
+    COMMIT_MESSAGE_STR_NAME = 'Message:'
     COMMIT_USERNAME_STR_NAME = 'Username:'
     COMMIT_DATE_STR_NAME = 'Date:'
+    COMMIT_HASH_STR_NAME = 'Hash:'
     FILE_NAME = 'commits_log.json'
     FILE_PATH = os.path.join(ProgramSettings.LIT_PATH, FILE_NAME)
     INIT_CONTENT = '{"commits":[]}'
     COMMITS_LIST_KEY = 'commits'
-    MESSAGE_FORMAT = COMMIT_STR_NAME + ' {0}' + os.linesep \
-                     + COMMIT_MESSAGE_STR_NAME + ' {1}' + os.linesep \
-                     + COMMIT_USERNAME_STR_NAME + ' {2}' + os.linesep \
-                     + COMMIT_DATE_STR_NAME + ' {3}' + os.linesep
+    MESSAGE_FORMAT = ' > ' + '{0: <8}'.format(COMMIT_HASH_STR_NAME) + ' {0}' + os.linesep + \
+                     '   ' + '{0: <8}'.format(COMMIT_MESSAGE_STR_NAME) + ' {1}' + os.linesep + \
+                     '   ' + '{0: <8}'.format(COMMIT_DATE_STR_NAME) + ' {3}'
 
 
 class RmStrings(object):

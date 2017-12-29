@@ -226,7 +226,7 @@ class JSONSerializer(ISerializer):
         '''Modifying JSON structure in temporary variable'''
         try:
             json_data[key].remove(value)
-        except ValueError:
+        except KeyError:
             result = False
 
         '''Converting to list'''
@@ -256,7 +256,7 @@ class JSONSerializer(ISerializer):
         try:
             for item in set_value:
                 json_data[key].remove(item)
-        except ValueError:
+        except KeyError:
             result = False
 
         '''Converting to list'''

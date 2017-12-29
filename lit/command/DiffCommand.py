@@ -1,11 +1,10 @@
 import os
 import shutil
-import zipfile
-import lit.paths
 import lit.diff.roberteldersoftwarediff as diff
 from lit.file.JSONSerializer import JSONSerializer
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.strings_holder import DiffStrings, LogSettings, CommitSettings, DiffSettings
+import lit.util as util
 
 
 class DiffCommand(BaseCommand):
@@ -28,21 +27,27 @@ class DiffCommand(BaseCommand):
             return False
 
         # get last commit short hash
-        serializer = JSONSerializer(LogSettings.FILE_PATH)
-        commits = serializer.read_all_items()['commits']
+        log_file_serializer = JSONSerializer(util.get_current_branch_log_file_path())
+        commits = log_file_serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
+
         if len(commits) == 0:
-            print('No commits found')
-            return
+            print('No commits were found')
+            return False
+
         last_commit = commits[len(commits) - 1]
-        last_commit_short_hash = last_commit["short_hash"]
+        last_commit_hash = last_commit[CommitSettings.LONG_HASH_KEY]
 
-        # unzip last commit snapshot
-        extracted_snapshot_path = self.unzip_commit_snapshot_to_temp_dir(last_commit_short_hash)
-
-        # run diff
         compared_file_name = kwargs[DiffStrings.ARG_PATH_1_NAME]
         compared_file_path = os.path.join(os.getcwd(), compared_file_name)
-        extracted_file_path = os.path.join(extracted_snapshot_path, compared_file_name)
+
+        # unzip last commit file
+        extracted_file_path = self.unzip_file_from_commit_to_temp_dir(last_commit_hash, compared_file_name)
+
+        if not extracted_file_path:
+            print('Cannot find previous version of file {0}'.format(compared_file_name))
+            return False
+
+        # run diff
         diff.main(
             [
                 extracted_file_path,
@@ -51,24 +56,13 @@ class DiffCommand(BaseCommand):
         )
 
         # remove extracted snapshot
-        shutil.rmtree(extracted_snapshot_path)
+        shutil.rmtree(DiffSettings.TEMP_PATH)
+        return True
 
     @staticmethod
-    def unzip_commit_snapshot_to_temp_dir(commit_hash):
-        commits_dir_path = os.path.join(lit.paths.DIR_PATH, 'commits')
-        zip_file_name = commit_hash + CommitSettings.ZIP_EXTENSION
-        zip_file_path = os.path.join(commits_dir_path, zip_file_name)
-        zip_ref = zipfile.ZipFile(zip_file_path, 'r')
-        try:
-            os.mkdir(DiffSettings.TEMP_PATH)
-        except FileExistsError:
-            pass
-        extracted_snapshot_path = os.path.join(DiffSettings.TEMP_PATH, commit_hash)
-        try:
-            os.mkdir(extracted_snapshot_path)
-        except FileExistsError:
-            pass
-        print(extracted_snapshot_path)
-        zip_ref.extractall(extracted_snapshot_path)
-        zip_ref.close()
-        return extracted_snapshot_path
+    def unzip_file_from_commit_to_temp_dir(commit_hash, file_path):
+        commit_short_hash = commit_hash[:CommitSettings.SHORT_HASH_LENGTH]
+        extracted_snapshot_path = os.path.join(DiffSettings.TEMP_PATH, commit_short_hash)
+        os.makedirs(extracted_snapshot_path, exist_ok=True)
+        extracted_file_path = util.unzip_file_from_commit(commit_hash, file_path, extracted_snapshot_path)
+        return extracted_file_path

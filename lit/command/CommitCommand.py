@@ -1,13 +1,9 @@
-import hashlib
-import json
 import os
 from datetime import datetime
-from zipfile import *
-
+import zipfile
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
-import hashlib
-import lit.paths
+import lit.util as util
 from lit.strings_holder import CommitStrings, TrackedFileSettings, CommitSettings, LogSettings
 
 
@@ -30,55 +26,119 @@ class CommitCommand(BaseCommand):
         if not self.check_repo():
             return False
 
-        serializer_tracked = JSONSerializer(TrackedFileSettings.FILE_PATH)
-        tracked = serializer_tracked.read_all_items()
-        if len(tracked['files']) == 0:
+        current_branch_log_file_path = util.get_current_branch_log_file_path()
+        commits_log_serializer = JSONSerializer(current_branch_log_file_path)
+
+        tracked_files_serializer = JSONSerializer(TrackedFileSettings.FILE_PATH)
+        tracked_files_set = tracked_files_serializer.get_all_from_set_item(
+            TrackedFileSettings.FILES_KEY)
+
+        unchanged_files, modified_files, new_files, deleted_files = self.get_files_status()
+
+        if not tracked_files_set and not deleted_files:
             print('No files in staging area were found')
-            return
-        zip_file_name = CommitSettings.ZIP_FILE_NAME + CommitSettings.ZIP_EXTENSION
+            return False
 
-        with ZipFile(zip_file_name, 'w') as myzip:
-            files_key = TrackedFileSettings.FILES_KEY
-            for file in tracked[files_key]:
-                myzip.write(file)
+        if not modified_files and not new_files and not deleted_files:
+            print('There are no changes since last commit')
+            tracked_files_serializer.remove_all_from_list_item(TrackedFileSettings.FILES_KEY)
+            return False
 
-        myzip_hash = self.get_file_hash(myzip.filename)
-        os.rename(zip_file_name,
-                  zip_file_name[:-8] + str(myzip_hash)[:10] + CommitSettings.ZIP_EXTENSION)
-        message = kwargs[CommitStrings.ARG_MSG_NAME]
+        temp_zip_file_name = CommitSettings.TEMP_FILE_PATH + CommitSettings.FILE_EXTENSION
+        temp_zip_file_path = os.path.join(CommitSettings.DIR_PATH, temp_zip_file_name)
+
+        last_commit_log = util.get_last_commit_log()
+
+        # if file has not been changed since last commit
+        # remove it from tracked files set
+        # (a reference to prev commit will be added instead)
+        if last_commit_log:
+            last_commit_files = last_commit_log[CommitSettings.FILES_KEY]
+
+            new_tracked_files_list = list(tracked_files_set)[:]
+            for file_new in tracked_files_set:
+                for file_old in last_commit_files:
+                    if file_old[CommitSettings.FILES_PATH_KEY] == file_new:
+                        file_new_hash = util.get_file_hash(file_new)
+                        if file_old[CommitSettings.FILES_FILE_HASH_KEY] == file_new_hash:
+                            new_tracked_files_list.remove(file_new)
+                        break
+            tracked_files_set = set(new_tracked_files_list)
+
+        commit_message = kwargs[CommitStrings.ARG_MSG_NAME]
+
+        commit_files_items_list = []
+
+        zip_file_hash = "0"
+
+        # if there are files to zip (changed/new files in staging area)
+        if tracked_files_set:
+            with zipfile.ZipFile(temp_zip_file_path, 'w') as zip_file_ref:
+                for file_name in tracked_files_set:
+                    zip_file_ref.write(file_name)
+
+            zip_file_hash = util.get_file_hash(temp_zip_file_path)
+
+            ''' Change snapshot file name from temporary to permanent '''
+            zip_file_name = str(zip_file_hash)[:CommitSettings.SHORT_HASH_LENGTH] + CommitSettings.FILE_EXTENSION
+            zip_file_path = os.path.join(CommitSettings.DIR_PATH, zip_file_name)
+            os.rename(temp_zip_file_path, zip_file_path)
+
+            for file_path in tracked_files_set:
+                file_hash = util.get_file_hash(file_path)
+                file_item = {
+                    CommitSettings.FILES_PATH_KEY: file_path,
+                    CommitSettings.FILES_FILE_HASH_KEY: file_hash,
+                    CommitSettings.FILES_COMMIT_HASH_KEY: zip_file_hash,
+                }
+                commit_files_items_list.append(file_item)
+
+        all_files_set = set(self.get_files_relative_path_list('.'))
+
+        not_tracked_files = all_files_set.difference(tracked_files_set)
+
+        if not_tracked_files:
+            unchanged_files, modified_files, new_files, deleted_files = self.get_files_status(
+                except_files=tracked_files_set)
+
+            if unchanged_files or modified_files:
+
+                if modified_files:
+                    print('Warning: there are some files changed since last commit, but not added to staging area:')
+                    for file in modified_files:
+                        print(' * {0}'.format(file))
+
+                # if file was in previous commit and is now present,
+                # copy its info to new log entry
+                if last_commit_log:
+                    last_commit_files = last_commit_log[CommitSettings.FILES_KEY]
+                    for file_path in not_tracked_files:
+                        if file_path in unchanged_files or file_path in modified_files:
+                            for file in last_commit_files:
+                                if file[CommitSettings.FILES_PATH_KEY] == file_path:
+                                    file_last_hash = file[CommitSettings.FILES_FILE_HASH_KEY]
+                                    file_last_hash_commit = file[CommitSettings.FILES_COMMIT_HASH_KEY]
+                                    break
+                            else:
+                                raise RuntimeError('File not found in last commit')
+
+                            file_item = {
+                                CommitSettings.FILES_PATH_KEY: file_path,
+                                CommitSettings.FILES_FILE_HASH_KEY: file_last_hash,
+                                CommitSettings.FILES_COMMIT_HASH_KEY: file_last_hash_commit,
+                            }
+                            commit_files_items_list.append(file_item)
+
         commit = {
-            CommitSettings.USER: 'user',
-            CommitSettings.LONG_HASH: myzip_hash,
-            CommitSettings.SHORT_HASH: myzip_hash[:10],
-            CommitSettings.DATETIME: str(datetime.utcnow()),
-            CommitSettings.COMMENT: message,
+            CommitSettings.USER_KEY: lit.util.get_user_name(),
+            CommitSettings.LONG_HASH_KEY: zip_file_hash,
+            CommitSettings.DATETIME_KEY: str(datetime.utcnow()),
+            CommitSettings.MESSAGE_KEY: commit_message,
+            CommitSettings.FILES_KEY: list(commit_files_items_list),
         }
 
-        myzip.close()
+        ''' Append commit to commits list in json file '''
+        commits_log_serializer.append_to_list_item(LogSettings.COMMITS_LIST_KEY, commit)
 
-        serializer_commits = JSONSerializer(LogSettings.FILE_PATH)
-        logs = serializer_commits.read_all_items()
-
-        c = open(LogSettings.FILE_PATH, 'w')
-        log_item = LogSettings.COMMITS_LIST_KEY
-        for item in logs[log_item]:
-            if item[CommitSettings.LONG_HASH] == myzip_hash:
-                print('There is no changes since last commit')
-                json.dump(logs, c)
-                c.close()
-                return
-        logs[log_item].append(commit)
-        json.dump(logs, c)
-        c.close()
-        with open(TrackedFileSettings.FILE_PATH, 'r') as file:
-            json_data = json.load(file)
-        json_data['files'].clear()
-        with open(TrackedFileSettings.FILE_PATH, 'w') as file:
-            json.dump(json_data, file)
-
-    def get_file_hash(self, file_name):
-        hsh = hashlib.sha256()
-        with open(file_name, 'br') as file:
-            for chunk in iter(lambda: file.read(4096), b''):
-                hsh.update(chunk)
-        return hsh.hexdigest()
+        tracked_files_serializer.remove_all_from_list_item(TrackedFileSettings.FILES_KEY)
+        return True

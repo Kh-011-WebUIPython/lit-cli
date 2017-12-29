@@ -1,7 +1,7 @@
-import os
 from lit.command.BaseCommand import BaseCommand
 from lit.file.JSONSerializer import JSONSerializer
 from lit.strings_holder import LogSettings, LogStrings, CommitSettings
+import lit.util as util
 
 
 class LogCommand(BaseCommand):
@@ -18,18 +18,22 @@ class LogCommand(BaseCommand):
         if not self.check_repo():
             return False
 
-        serializer = JSONSerializer(LogSettings.FILE_PATH)
+        current_branch_log_file_path = util.get_current_branch_log_file_path()
+
+        serializer = JSONSerializer(current_branch_log_file_path)
         commits = serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
         self.print_commits_list(commits)
+
+        return True
 
     @staticmethod
     def print_commits_list(commits):
         if len(commits) != 0:
             for commit in commits:
-                short_hash = commit[CommitSettings.SHORT_HASH]
-                message = commit[CommitSettings.COMMENT]
-                user = commit[CommitSettings.USER]
-                datetime = commit[CommitSettings.DATETIME]
+                short_hash = commit[CommitSettings.LONG_HASH_KEY][:CommitSettings.SHORT_HASH_LENGTH]
+                message = commit[CommitSettings.MESSAGE_KEY]
+                user = commit[CommitSettings.USER_KEY]
+                datetime = commit[CommitSettings.DATETIME_KEY]
 
                 output = LogSettings.MESSAGE_FORMAT.format(short_hash, message, user, datetime)
                 print(output)

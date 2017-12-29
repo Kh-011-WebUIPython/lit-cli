@@ -2,6 +2,7 @@ import sys
 import os
 import io
 import unittest
+
 from tests import util
 
 ''' Need to run here to change working directory before strings_holder import '''
@@ -9,6 +10,7 @@ os.chdir(util.TEST_DIR_PATH)
 
 from lit.command.InitCommand import InitCommand
 from lit.strings_holder import ProgramSettings, InitStrings, TrackedFileSettings, LogSettings, CommitSettings
+import lit.util
 
 
 class TestInitCommand(unittest.TestCase):
@@ -21,19 +23,22 @@ class TestInitCommand(unittest.TestCase):
         if not os.path.isdir(util.TEST_DIR_PATH):
             raise EnvironmentError('Could not find test dir \'' + util.TEST_DIR_PATH + '\'')
         if len(os.listdir(util.TEST_DIR_PATH)) != 0:
-            util.clear_dir_content(util.TEST_DIR_PATH)
+            lit.util.clear_dir_content(util.TEST_DIR_PATH)
 
     def tearDown(self):
-        util.clear_dir_content(util.TEST_DIR_PATH)
+        lit.util.clear_dir_content(util.TEST_DIR_PATH)
 
     def test_check_dot_lit_dir_content(self):
         self.assertTrue(InitCommand().run())
-        lit_path = os.path.join(util.TEST_DIR_PATH, ProgramSettings.LIT_DIR)
+        lit_path = ProgramSettings.LIT_PATH
         self.assertTrue(os.path.isdir(lit_path), lit_path)
-        expected_files = {TrackedFileSettings.FILE_NAME, LogSettings.FILE_NAME}
+        expected_files = {ProgramSettings.LIT_SETTINGS_NAME,
+                          TrackedFileSettings.FILE_NAME,
+                          lit.util.get_current_branch_log_file_name()}
         expected_dirs = {CommitSettings.DIR_NAME}
         dir_items = os.listdir(lit_path)
-        self.assertEqual(3, len(dir_items))
+        self.assertEqual(4, len(dir_items), 'dir items: ' + str(dir_items))
+        print(str(dir_items))
         for item in dir_items:
             item_path = os.path.join(lit_path, item)
             if os.path.isfile(item_path):
