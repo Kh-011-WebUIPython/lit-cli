@@ -2,9 +2,7 @@ import os
 import shutil
 import hashlib
 import zipfile
-
 from lit.file.JSONSerializer import JSONSerializer
-import lit.paths
 from lit.strings_holder import ProgramSettings, BranchSettings, CommitSettings, LogSettings
 
 
@@ -55,9 +53,8 @@ def unzip_file_from_commit(commit_hash, file_path, extract_to):
 def unzip_commit(commit_short_hash, extract_to):
     if not os.path.exists(extract_to):
         raise FileNotFoundError('Dir \'' + extract_to + '\' not found')
-    commits_dir_path = os.path.join(lit.paths.DIR_PATH, 'commits')
     zip_file_name = commit_short_hash + CommitSettings.FILE_EXTENSION
-    zip_file_path = os.path.join(commits_dir_path, zip_file_name)
+    zip_file_path = os.path.join(CommitSettings.DIR_PATH, zip_file_name)
     zip_ref = zipfile.ZipFile(zip_file_path, 'r')
     zip_ref.extractall(extract_to)
     zip_ref.close()

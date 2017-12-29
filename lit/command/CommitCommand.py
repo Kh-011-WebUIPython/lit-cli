@@ -3,7 +3,6 @@ from datetime import datetime
 import zipfile
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
-import lit.paths
 import lit.util as util
 from lit.strings_holder import CommitStrings, TrackedFileSettings, CommitSettings, LogSettings
 
