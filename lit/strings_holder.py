@@ -116,6 +116,17 @@ class InitSettings(object):
     pass
 
 
+class IgnoredFilesSettings(object):
+    FILE_NAME = '.litignore'
+    FILE_PATH = os.path.join(ProgramSettings.LIT_WORKING_DIRECTORY_PATH, FILE_NAME)
+    FILE_INITIAL_CONTENT = '''# This file is used to store paths which should not be tracked by LIT
+# Lines beginning with sharp sign are ignored and can be used as comments
+# The file must contain valid directories or files paths only
+# Write necessary paths below, one per line
+'''
+    FILE_COMMENT_PREFIX = "#"
+
+
 class LogStrings(object):
     NAME = 'log'
     HELP = 'show commits history'

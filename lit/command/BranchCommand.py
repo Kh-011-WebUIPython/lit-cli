@@ -40,6 +40,8 @@ class BranchCommand(BaseCommand):
 
         # TODO add branch list command
 
+        # TODO add parent branch field
+
         settings_serializer = JSONSerializer(ProgramSettings.LIT_SETTINGS_PATH)
         active_branch_name = settings_serializer.get_value(ProgramSettings.ACTIVE_BRANCH_KEY)
 

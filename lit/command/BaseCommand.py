@@ -1,7 +1,7 @@
 import os
 import abc
 import enum
-from lit.strings_holder import ProgramSettings, BranchSettings, LogSettings, CommitSettings
+from lit.strings_holder import ProgramSettings, BranchSettings, LogSettings, CommitSettings, IgnoredFilesSettings
 from lit.file.JSONSerializer import JSONSerializer
 import lit.util as util
 
@@ -65,13 +65,17 @@ class BaseCommand(abc.ABC):
                     branches_names.append(branch_name)
         return branches_names
 
-    @staticmethod
-    def get_file_status(file_path):
+    @classmethod
+    def get_file_status(cls, file_path):
         """ unchanged / modified / new """
-
+        ignored_files = cls.get_ignored_files_paths()
+        if file_path in ignored_files:
+            return FileStatus.IGNORED
         current_branch_log_file_path = util.get_current_branch_log_file_path()
         commits_log_serializer = JSONSerializer(current_branch_log_file_path)
         commits = commits_log_serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
+        if not commits:
+            return FileStatus.NEW
         last_commit = commits[len(commits) - 1]
         files = last_commit[CommitSettings.FILES_KEY]
         for file in files:
@@ -90,6 +94,7 @@ class BaseCommand(abc.ABC):
     def get_files_status(cls, except_files=None):
         if except_files is None:
             except_files = set()
+        except_files.update(cls.get_ignored_files_paths())
         current_branch_log_file_path = util.get_current_branch_log_file_path()
         commits_log_serializer = JSONSerializer(current_branch_log_file_path)
         commits = commits_log_serializer.get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
@@ -98,16 +103,16 @@ class BaseCommand(abc.ABC):
         if not commits:
             new_files = set(cls.get_files_relative_path_list('.'))
             new_files.difference_update(except_files)
-            return set(), set(), new_files
+            return set(), set(), new_files, set()
 
         last_commit = commits[len(commits) - 1]
         files_from_last_commit = last_commit[CommitSettings.FILES_KEY]
         files_actual = cls.get_files_relative_path_list('.')
-        deleted_files = []
+        deleted_files = set()
         for file in files_from_last_commit:
             file_path = file[CommitSettings.FILES_PATH_KEY]
             if file_path not in except_files:
-                deleted_files.append(file_path)
+                deleted_files.add(file_path)
         new_files = set()
         modified_files = set()
         unchanged_files = set()
@@ -126,6 +131,21 @@ class BaseCommand(abc.ABC):
             else:
                 new_files.add(file_new)
         return unchanged_files, modified_files, new_files, deleted_files
+
+    @classmethod
+    def get_ignored_files_paths(cls):
+        try:
+            ignored_files_file = open(IgnoredFilesSettings.FILE_PATH)
+        except IOError:
+            return set()
+        lines = ignored_files_file.readlines()
+        ignored_files_paths_set = set()
+        for line in lines:
+            line = line.strip()
+            if line and not line.startswith(IgnoredFilesSettings.FILE_COMMENT_PREFIX):
+                ignored_files_paths_set.add(line)
+        ignored_files_file.close()
+        return ignored_files_paths_set
 
     @classmethod
     def check_if_branch_exists(cls, branch_name):
@@ -176,3 +196,4 @@ class FileStatus(enum.Enum):
     MODIFIED = 2
     NEW = 3
     DELETED = 4
+    IGNORED = 5

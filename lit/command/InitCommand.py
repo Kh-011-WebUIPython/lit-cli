@@ -2,7 +2,7 @@ import os
 from lit.command.BaseCommand import BaseCommand
 from lit.file.JSONSerializer import JSONSerializer
 from lit.strings_holder import ProgramSettings, CommitSettings, InitStrings, \
-    TrackedFileSettings, LogSettings, BranchSettings
+    TrackedFileSettings, LogSettings, BranchSettings, IgnoredFilesSettings
 
 
 class InitCommand(BaseCommand):
@@ -31,6 +31,9 @@ class InitCommand(BaseCommand):
             default_branch_log_file_path = os.path.join(ProgramSettings.LIT_PATH, default_branch_log_file_name)
             commits_serializer = JSONSerializer(default_branch_log_file_path)
             commits_serializer.create_list_item(LogSettings.COMMITS_LIST_KEY)
+
+            with open(IgnoredFilesSettings.FILE_PATH, 'w') as file:
+                file.write(IgnoredFilesSettings.FILE_INITIAL_CONTENT)
 
             return True
         else:

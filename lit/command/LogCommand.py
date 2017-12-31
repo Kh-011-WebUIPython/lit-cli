@@ -18,6 +18,8 @@ class LogCommand(BaseCommand):
         if not self.check_repo():
             return False
 
+        # TODO add optional detailed log (all info from JSON)
+
         current_branch_log_file_path = util.get_current_branch_log_file_path()
 
         serializer = JSONSerializer(current_branch_log_file_path)
