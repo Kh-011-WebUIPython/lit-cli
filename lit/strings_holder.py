@@ -46,6 +46,7 @@ class BranchStrings(object):
 class BranchSettings(object):
     JSON_KEY_NAME = 'branch_name'
     JSON_FILE_NAME_SUFFIX = '_commits_log.json'
+    JSON_PARENT_BRANCH_NAME_KEY = 'parent_branch'
 
 
 class CheckoutStrings(object):

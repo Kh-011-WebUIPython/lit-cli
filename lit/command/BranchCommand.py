@@ -2,7 +2,7 @@ import os
 import shutil
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
-from lit.strings_holder import ProgramSettings, BranchStrings
+from lit.strings_holder import ProgramSettings, BranchStrings, BranchSettings
 import lit.util as util
 
 
@@ -65,6 +65,9 @@ class BranchCommand(BaseCommand):
         new_branch_log_file_path = util.get_branch_log_file_path(new_branch_name)
 
         shutil.copy(old_branch_log_file_path, new_branch_log_file_path)
+
+        new_branch_serializer = JSONSerializer(new_branch_log_file_path)
+        new_branch_serializer.set_value(BranchSettings.JSON_PARENT_BRANCH_NAME_KEY, active_branch_name)
 
         print('Branch \'{0}\' has been created successfully'.format(new_branch_name))
         return True
