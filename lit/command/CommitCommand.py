@@ -130,7 +130,7 @@ class CommitCommand(BaseCommand):
                             commit_files_items_list.append(file_item)
 
         commit = {
-            CommitSettings.USER_KEY: lit.util.get_user_name(),
+            CommitSettings.USER_KEY: util.get_user_name(),
             CommitSettings.LONG_HASH_KEY: zip_file_hash,
             CommitSettings.DATETIME_KEY: str(datetime.utcnow()),
             CommitSettings.MESSAGE_KEY: commit_message,
