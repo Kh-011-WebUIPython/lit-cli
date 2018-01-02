@@ -147,15 +147,13 @@ class BaseCommand(abc.ABC):
             line = line.strip()
             """ 
             Remove comments from lines '#'
-            
-            Example test_*.doc #awesome pattern --> test_*.doc
-            
+            Example 'test_*.doc #awesome pattern' --> 'test_*.doc'
             """
             if IgnoredFilesSettings.FILE_COMMENT_PREFIX in line:
                 line = line[:line.index(IgnoredFilesSettings.FILE_COMMENT_PREFIX)].strip()
             if line:
                 patterns.add(line)
-        files = os.listdir('.') # use os.getcwd()
+        files = cls.get_files_relative_path_list('.')
         for pattern in patterns:
             ignored_files_paths_set.update(fnmatch.filter(files, pattern))
         return ignored_files_paths_set
