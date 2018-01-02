@@ -155,7 +155,10 @@ class BaseCommand(abc.ABC):
                 patterns.add(line)
         files = cls.get_files_relative_path_list('.')
         for pattern in patterns:
-            ignored_files_paths_set.update(fnmatch.filter(files, pattern))
+            for file in files:
+                file_parts = util.split_path(file)
+                if fnmatch.filter(file_parts, pattern):
+                    ignored_files_paths_set.add(file)
         return ignored_files_paths_set
 
     @classmethod

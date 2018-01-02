@@ -33,7 +33,6 @@ def unzip_file_from_commit(commit_hash, file_path, extract_to):
                 # find necessary file in commit
                 for file in commit_files:
                     if file[CommitSettings.FILES_PATH_KEY] == file_path:
-
                         # get commit archive path
                         commit_short_hash_with_file = \
                             file[CommitSettings.FILES_COMMIT_HASH_KEY][:CommitSettings.SHORT_HASH_LENGTH]
@@ -126,3 +125,14 @@ def get_file_hash(file_path):
         for chunk in iter(lambda: file.read(4096), b''):
             hsh.update(chunk)
     return hsh.hexdigest()
+
+
+def split_path(path):
+    parts = []
+    while True:
+        head, tail = os.path.split(path)
+        parts.append(tail)
+        if not head or head == '/':
+            break
+        path = head
+    return parts
