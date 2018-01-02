@@ -1,6 +1,8 @@
 import os
 import abc
 import enum
+import fnmatch
+
 from lit.strings_holder import ProgramSettings, BranchSettings, LogSettings, CommitSettings, IgnoredFilesSettings
 from lit.file.JSONSerializer import JSONSerializer
 import lit.util as util
@@ -135,16 +137,28 @@ class BaseCommand(abc.ABC):
     @classmethod
     def get_ignored_files_paths(cls):
         try:
-            ignored_files_file = open(IgnoredFilesSettings.FILE_PATH)
-        except IOError:
+            with open(IgnoredFilesSettings.FILE_PATH) as ignored_files_file:
+                lines = ignored_files_file.readlines()
+        except (IOError, OSError):
             return set()
-        lines = ignored_files_file.readlines()
         ignored_files_paths_set = set()
+        patterns = set()
         for line in lines:
             line = line.strip()
-            if line and not line.startswith(IgnoredFilesSettings.FILE_COMMENT_PREFIX):
-                ignored_files_paths_set.add(line)
-        ignored_files_file.close()
+            """ 
+            Remove comments from lines '#'
+            Example 'test_*.doc #awesome pattern' --> 'test_*.doc'
+            """
+            if IgnoredFilesSettings.FILE_COMMENT_PREFIX in line:
+                line = line[:line.index(IgnoredFilesSettings.FILE_COMMENT_PREFIX)].strip()
+            if line:
+                patterns.add(line)
+        files = cls.get_files_relative_path_list('.')
+        for pattern in patterns:
+            for file in files:
+                file_parts = util.split_path(file)
+                if fnmatch.filter(file_parts, pattern):
+                    ignored_files_paths_set.add(file)
         return ignored_files_paths_set
 
     @classmethod
