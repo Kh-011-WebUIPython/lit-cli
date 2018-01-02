@@ -137,10 +137,10 @@ class BaseCommand(abc.ABC):
     @classmethod
     def get_ignored_files_paths(cls):
         try:
-            ignored_files_file = open(IgnoredFilesSettings.FILE_PATH)
+            with open(IgnoredFilesSettings.FILE_PATH) as ignored_files_file:
+                lines = ignored_files_file.readlines()
         except (IOError, OSError):
             return set()
-        lines = ignored_files_file.readlines()
         ignored_files_paths_set = set()
         patterns = set()
         for line in lines:
@@ -156,7 +156,6 @@ class BaseCommand(abc.ABC):
         files = cls.get_files_relative_path_list('.')
         for pattern in patterns:
             ignored_files_paths_set.update(fnmatch.filter(files, pattern))
-        ignored_files_file.close()
         return ignored_files_paths_set
 
     @classmethod
