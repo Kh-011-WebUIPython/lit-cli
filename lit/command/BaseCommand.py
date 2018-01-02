@@ -156,6 +156,7 @@ class BaseCommand(abc.ABC):
         files = cls.get_files_relative_path_list('.')
         for pattern in patterns:
             ignored_files_paths_set.update(fnmatch.filter(files, pattern))
+        ignored_files_file.close()
         return ignored_files_paths_set
 
     @classmethod
