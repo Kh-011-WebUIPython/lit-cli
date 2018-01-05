@@ -2,6 +2,7 @@
     String constants for lit commands description
 """
 import os
+from pathlib import Path
 
 
 class ProgramStrings(object):
@@ -15,6 +16,10 @@ class ProgramSettings(object):
     LIT_PATH = os.path.join(LIT_WORKING_DIRECTORY_PATH, LIT_DIR)
     LIT_SETTINGS_NAME = 'settings.json'
     LIT_SETTINGS_PATH = os.path.join(LIT_PATH, LIT_SETTINGS_NAME)
+
+    LIT_USER_SETTINGS_NAME = '.litconfig'
+    LIT_USER_SETTINGS_DIR = Path.home()
+    LIT_USER_SETTINGS_PATH = os.path.join(LIT_USER_SETTINGS_DIR, LIT_USER_SETTINGS_NAME)
 
     ACTIVE_BRANCH_KEY = 'active_branch'
     ACTIVE_BRANCH_DEFAULT = 'master'
@@ -76,6 +81,7 @@ class CommitSettings(object):
     FILE_EXTENSION = '.zip'
 
     USER_KEY = 'user'
+    EMAIL_KEY = 'email'
     LONG_HASH_KEY = 'long_hash'
     DATETIME_KEY = 'datetime'
     MESSAGE_KEY = 'message'
@@ -138,6 +144,8 @@ class LogSettings(object):
     COMMIT_STR_NAME = 'Commit:'
     COMMIT_MESSAGE_STR_NAME = 'Message:'
     COMMIT_USERNAME_STR_NAME = 'Username:'
+    COMMIT_EMAIL_STR_NAME = 'Email:'
+    COMMIT_USER_STR_NAME = 'User:'
     COMMIT_DATE_STR_NAME = 'Date:'
     COMMIT_HASH_STR_NAME = 'Hash:'
     FILE_NAME = 'commits_log.json'
@@ -145,8 +153,8 @@ class LogSettings(object):
     INIT_CONTENT = '{"commits":[]}'
     COMMITS_LIST_KEY = 'commits'
     MESSAGE_FORMAT = ' > ' + '{0: <8}'.format(COMMIT_HASH_STR_NAME) + ' {0}' + os.linesep + \
-                     '   ' + '{0: <8}'.format(COMMIT_MESSAGE_STR_NAME) + ' {1}' + os.linesep + \
-                     '   ' + '{0: <8}'.format(COMMIT_DATE_STR_NAME) + ' {3}'
+                     '   ' + '{0: <8}'.format(COMMIT_MESSAGE_STR_NAME) + ' {3}' + os.linesep + \
+                     '   ' + '{0: <8}'.format(COMMIT_DATE_STR_NAME) + ' {4}'
 
 
 class RmStrings(object):
@@ -154,6 +162,21 @@ class RmStrings(object):
     HELP = 'remove files from staging area'
     ARG_PATH_NAME = 'path'
     ARG_PATH_HELP = 'path to file'
+
+
+class SettingsStrings(object):
+    NAME = 'settings'
+    HELP = 'user settings'
+
+    ARG_ACTION_NAME = 'action'
+    ARG_ACTION_HELP = 'set or get'
+    ARG_ACTION_CHOICE_SET = 'set'
+    ARG_ACTION_CHOICE_GET = 'get'
+
+    ARG_NAME_NAME = 'name'
+    ARG_NAME_HELP = 'setting name'
+    ARG_NAME_CHOICE_USERNAME = 'username'
+    ARG_NAME_CHOICE_EMAIL = 'email'
 
 
 class StatusStrings(object):
