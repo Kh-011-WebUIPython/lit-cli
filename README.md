@@ -34,23 +34,27 @@ $ pip install --editable .
 ## Basic Usage
 Available command list:
 ```sh
-$ lit -h
-usage: lit [-h] {add,commit,diff,init,log,rm,status} ...
+usage: lit [-h]
+           {add,branch,checkout,commit,diff,init,log,rm,settings,status} ...
 
 LIT version control system
 
 positional arguments:
-  {add,commit,diff,init,log,rm,status}
-    add                 adds files to staging area
-    commit              commits files from staging area to repository
-    diff                shows difference between two files
-    init                initializes repository in the current directory
-    log                 shows lit log
-    rm                  removes files from staging area
-    status              shows repository state
+  {add,branch,checkout,commit,diff,init,log,rm,settings,status}
+    add                 add files to staging area
+    branch              manage branch
+    checkout            checkout to another branch
+    commit              commit files from staging area to repository
+    diff                show changes in file since last commit
+    init                initialize repository in the current directory
+    log                 show commits history
+    rm                  remove files from staging area
+    settings            user settings
+    status              show repository state
 
 optional arguments:
   -h, --help            show this help message and exit
+
 ```
 
 
