@@ -18,7 +18,7 @@ class ProgramSettings(object):
     LIT_SETTINGS_PATH = os.path.join(LIT_PATH, LIT_SETTINGS_NAME)
 
     LIT_USER_SETTINGS_NAME = '.litconfig'
-    LIT_USER_SETTINGS_DIR = Path.home()
+    LIT_USER_SETTINGS_DIR = str(Path.home())
     LIT_USER_SETTINGS_PATH = os.path.join(LIT_USER_SETTINGS_DIR, LIT_USER_SETTINGS_NAME)
 
     ACTIVE_BRANCH_KEY = 'active_branch'
