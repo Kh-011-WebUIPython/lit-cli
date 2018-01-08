@@ -33,8 +33,6 @@ class SettingsCommand(BaseCommand):
     def run(self, **kwargs):
         if not super().run():
             return False
-        # if not self.check_repo():
-        #     return False
 
         user_settings_serializer = JSONSerializer(ProgramSettings.LIT_USER_SETTINGS_PATH)
 
