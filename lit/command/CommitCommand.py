@@ -4,7 +4,7 @@ import zipfile
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
 import lit.util as util
-from lit.strings_holder import CommitStrings, TrackedFileSettings, CommitSettings, LogSettings
+from lit.strings_holder import CommitStrings, TrackedFileSettings, CommitSettings, LogSettings, SettingsStrings
 
 
 class CommitCommand(BaseCommand):
@@ -24,6 +24,17 @@ class CommitCommand(BaseCommand):
         if not super().run():
             return False
         if not self.check_repo():
+            return False
+
+        username = util.get_user_name()
+        email = util.get_user_email()
+
+        if not username or not email:
+            print('Set up following settings first: ')
+            if not username:
+                print(" > {0}".format(SettingsStrings.ARG_NAME_CHOICE_USERNAME))
+            if not email:
+                print(" > {0}".format(SettingsStrings.ARG_NAME_CHOICE_EMAIL))
             return False
 
         current_branch_log_file_path = util.get_current_branch_log_file_path()
@@ -130,7 +141,8 @@ class CommitCommand(BaseCommand):
                             commit_files_items_list.append(file_item)
 
         commit = {
-            CommitSettings.USER_KEY: util.get_user_name(),
+            CommitSettings.USER_KEY: username,
+            CommitSettings.EMAIL_KEY: email,
             CommitSettings.LONG_HASH_KEY: zip_file_hash,
             CommitSettings.DATETIME_KEY: str(datetime.utcnow()),
             CommitSettings.MESSAGE_KEY: commit_message,

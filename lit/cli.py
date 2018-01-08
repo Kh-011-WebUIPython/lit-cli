@@ -10,6 +10,7 @@ from lit.command.DiffCommand import DiffCommand
 from lit.command.InitCommand import InitCommand
 from lit.command.LogCommand import LogCommand
 from lit.command.RmCommand import RmCommand
+from lit.command.SettingsCommand import SettingsCommand
 from lit.command.StatusCommand import StatusCommand
 from lit.strings_holder import ProgramStrings, CommandStrings
 
@@ -47,6 +48,7 @@ def main():
         InitCommand(),
         LogCommand(),
         RmCommand(),
+        SettingsCommand(),
         StatusCommand(),
     ]
 

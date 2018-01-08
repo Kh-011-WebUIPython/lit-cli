@@ -3,7 +3,7 @@ import shutil
 import hashlib
 import zipfile
 from lit.file.JSONSerializer import JSONSerializer
-from lit.strings_holder import ProgramSettings, BranchSettings, CommitSettings, LogSettings
+from lit.strings_holder import ProgramSettings, BranchSettings, CommitSettings, LogSettings, SettingsStrings
 
 
 def clear_dir_content(dir_path, except_dirs=()):
@@ -85,9 +85,15 @@ def get_current_branch_log_file_path():
 
 
 def get_user_name():
-    settings_serializer = JSONSerializer(ProgramSettings.LIT_SETTINGS_PATH)
-    user_name = settings_serializer.get_value(ProgramSettings.USER_NAME_KEY)
+    user_settings_serializer = JSONSerializer(ProgramSettings.LIT_USER_SETTINGS_PATH)
+    user_name = user_settings_serializer.get_value(SettingsStrings.ARG_NAME_CHOICE_USERNAME)
     return user_name
+
+
+def get_user_email():
+    user_settings_serializer = JSONSerializer(ProgramSettings.LIT_USER_SETTINGS_PATH)
+    user_email = user_settings_serializer.get_value(SettingsStrings.ARG_NAME_CHOICE_EMAIL)
+    return user_email
 
 
 def get_last_commit_hash_in_branch(branch_name):
