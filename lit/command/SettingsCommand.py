@@ -1,9 +1,6 @@
-import os
-import shutil
 from lit.command.BaseCommand import BaseCommand, CommandArgument
 from lit.file.JSONSerializer import JSONSerializer
-from lit.strings_holder import ProgramSettings, BranchStrings, BranchSettings, SettingsStrings
-import lit.util as util
+from lit.strings_holder import ProgramSettings, SettingsStrings
 
 
 class SettingsCommand(BaseCommand):
@@ -36,8 +33,8 @@ class SettingsCommand(BaseCommand):
     def run(self, **kwargs):
         if not super().run():
             return False
-        if not self.check_repo():
-            return False
+        # if not self.check_repo():
+        #     return False
 
         user_settings_serializer = JSONSerializer(ProgramSettings.LIT_USER_SETTINGS_PATH)
 
@@ -46,6 +43,8 @@ class SettingsCommand(BaseCommand):
 
         if action == SettingsStrings.ARG_ACTION_CHOICE_SET:
             new_value = input('Enter new {0}: '.format(setting_name))
+            while not len(new_value):
+                new_value = input('Enter new {0}: '.format(setting_name))
             user_settings_serializer.set_value(setting_name, new_value)
             return True
         elif action == SettingsStrings.ARG_ACTION_CHOICE_GET:
