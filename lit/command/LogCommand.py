@@ -38,7 +38,7 @@ class LogCommand(BaseCommand):
                 email = commit[CommitSettings.EMAIL_KEY]
                 datetime = commit[CommitSettings.DATETIME_KEY]
 
-                output = LogSettings.MESSAGE_FORMAT.format(short_hash, user, email, message, datetime)
+                output = LogSettings.MESSAGE_FORMAT.format(short_hash, message, user, email, datetime)
                 print(output)
         else:
             print(LogStrings.COMMITS_NOT_FOUND)

@@ -153,7 +153,8 @@ class LogSettings(object):
     INIT_CONTENT = '{"commits":[]}'
     COMMITS_LIST_KEY = 'commits'
     MESSAGE_FORMAT = ' > ' + '{0: <8}'.format(COMMIT_HASH_STR_NAME) + ' {0}' + os.linesep + \
-                     '   ' + '{0: <8}'.format(COMMIT_MESSAGE_STR_NAME) + ' {3}' + os.linesep + \
+                     '   ' + '{0: <8}'.format(COMMIT_MESSAGE_STR_NAME) + ' {1}' + os.linesep + \
+                     '   ' + '{0: <8}'.format(COMMIT_USER_STR_NAME) + ' {2} ({3})' + os.linesep + \
                      '   ' + '{0: <8}'.format(COMMIT_DATE_STR_NAME) + ' {4}'
 
 
