@@ -157,6 +157,29 @@ class LogSettings(object):
                      '   ' + '{0: <8}'.format(COMMIT_DATE_STR_NAME) + ' {4}'
 
 
+class PushStrings(object):
+    NAME = 'push'
+    HELP = 'pushes commits to remote server'
+
+
+class PushSettings(object):
+    ENDPOINT = 'http://localhost:7000'
+
+
+class RemoteStrings(object):
+    NAME = 'remote'
+    HELP = 'manage remote server address'
+
+    ARG_ACTION_NAME = 'action'
+    ARG_ACTION_HELP = 'set or get'
+    ARG_ACTION_CHOICE_SET = 'set'
+    ARG_ACTION_CHOICE_GET = 'get'
+
+    ARG_NAME_NAME = 'name'
+    ARG_NAME_HELP = 'remote server setting'
+    ARG_NAME_CHOICE_URL = 'url'
+
+
 class RmStrings(object):
     NAME = 'rm'
     HELP = 'remove files from staging area'

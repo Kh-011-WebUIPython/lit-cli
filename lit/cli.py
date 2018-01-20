@@ -9,6 +9,8 @@ from lit.command.CommitCommand import CommitCommand
 from lit.command.DiffCommand import DiffCommand
 from lit.command.InitCommand import InitCommand
 from lit.command.LogCommand import LogCommand
+from lit.command.PushCommand import PushCommand
+from lit.command.RemoteCommand import RemoteCommand
 from lit.command.RmCommand import RmCommand
 from lit.command.SettingsCommand import SettingsCommand
 from lit.command.StatusCommand import StatusCommand
@@ -47,6 +49,8 @@ def main():
         DiffCommand(),
         InitCommand(),
         LogCommand(),
+        PushCommand(),
+        RemoteCommand(),
         RmCommand(),
         SettingsCommand(),
         StatusCommand(),

@@ -47,8 +47,6 @@ class CheckoutCommand(BaseCommand):
             print('Branch \'{0}\' not found'.format(branch_name))
             return False
 
-        # TODO WHERE TO GET LAST <FULL> SNAPSHOT???
-
         print('Switching to branch {0}...'.format(branch_name), end='')
         self.restore_last_snapshot_for_branch(branch_name)
 
@@ -65,7 +63,6 @@ class CheckoutCommand(BaseCommand):
     @classmethod
     def restore_last_snapshot_for_branch(cls, branch_name):
         util.clear_dir_content(ProgramSettings.LIT_WORKING_DIRECTORY_PATH, except_dirs=ProgramSettings.LIT_DIR)
-        # TODO unpack all files (may be in different archives)
         # 1. unpack necessary commits to own folders in temp dir
         # 2. move necessary files from each unpacked commit to repo dir
         # 3. delete temp dir content
@@ -115,16 +112,10 @@ class CheckoutCommand(BaseCommand):
                 except FileExistsError:
                     pass
 
-                # print(('from: {0}' + os.linesep + 'to: {1}').format(move_from, move_to))
                 shutil.move(move_from, move_to)
 
             # clear temp dir content
-            # util.clear_dir_content(CheckoutSettings.TEMP_DIR_PATH)
             shutil.rmtree(CheckoutSettings.TEMP_DIR_PATH)
-
-        # ''' If last_commit_hash is not None, restore last commit content '''
-        # if last_commit_short_hash:
-        #     util.unzip_commit_snapshot(last_commit_short_hash, ProgramSettings.LIT_WORKING_DIRECTORY_PATH)
 
     @classmethod
     def get_current_repo_state_hash(cls):
