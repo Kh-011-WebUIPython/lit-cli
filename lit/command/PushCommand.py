@@ -34,24 +34,28 @@ class PushCommand(BaseCommand):
         # get current branch name
         current_branch_name = util.get_current_branch_name()
 
+        branch_log_file_path = util.get_branch_log_file_path(current_branch_name)
+        current_branch_commits = JSONSerializer(branch_log_file_path).get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
+
         # obtain list of necessary commits to send, get session token
-        commits_hashes_to_send, session_token = self.send_available_branch_commits_hashes(current_branch_name)
+        commits_hashes_to_send, session_token = self.send_available_branch_commits_hashes(
+            current_branch_name, current_branch_commits)
 
         if not session_token:
             print('Bad server response')
             return False
 
+        commits_logs_to_send = self.get_logs_by_commits_hashes(commits_hashes_to_send, current_branch_commits)
+
         # prepare package of necessary commits
-        packed_commits_to_send = self.pack_commits(commits_hashes_to_send)
+        packed_commits_to_send = self.pack_commits(commits_hashes_to_send, commits_logs_to_send)
 
         # send packed commits using previous session token
-        self.send_commits(packed_commits_to_send, session_token)
+        return self.send_commits(packed_commits_to_send, session_token)
 
-    def send_available_branch_commits_hashes(self, branch_name):
-        branch_log_file_path = util.get_branch_log_file_path(branch_name)
-        commits = JSONSerializer(branch_log_file_path).get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
+    def send_available_branch_commits_hashes(self, branch_name, branch_commits):
         commits_hashes = []
-        for commit in commits:
+        for commit in branch_commits:
             commit_hash = commit[CommitSettings.LONG_HASH_KEY]
             commits_hashes.append(commit_hash)
         json_data = json.dumps({'branch_name': branch_name, 'commits_hashes': commits_hashes})
@@ -66,14 +70,21 @@ class PushCommand(BaseCommand):
             return [], ''
         return commits_hashes_to_send, session_token
 
+    def get_logs_by_commits_hashes(self, commits_hashes, commits):
+        commits_logs = []
+        for commit in commits:
+            if commit[CommitSettings.LONG_HASH_KEY] in commits_hashes:
+                commits_logs.append(commit)
+        return commits_logs
+
     def send_commits(self, packed_commits, session_token):
-        encoded_package = base64.b64encode(packed_commits)
+        encoded_package = base64.b64encode(packed_commits).decode('utf-8')
         body = {'session_token': session_token, 'data': encoded_package}
         json_data = json.dumps(body)
         request = requests.post(url=PushSettings.ENDPOINT, json=json_data)
         return True if request.status_code == requests.codes.ok else False
 
-    def pack_commits(self, commits_logs, commits_hashes):
+    def pack_commits(self, commits_hashes, commits_logs):
         """
         Combines commits to single package.
 
@@ -94,12 +105,12 @@ class PushCommand(BaseCommand):
         :return: binary package
         """
 
-        commits_logs_bytes = commits_logs.encode('utf-8')
+        commits_logs_bytes = json.dumps(commits_logs).encode('utf-8')
 
         commits_archives_bytes = bytearray()
         archives_lengths = {}
         for commit_hash in commits_hashes:
-            archive_name = commit_hash + CommitSettings.FILE_EXTENSION
+            archive_name = commit_hash[:CommitSettings.SHORT_HASH_LENGTH] + CommitSettings.FILE_EXTENSION
             archive_path = os.path.join(CommitSettings.DIR_PATH, archive_name)
             with open(archive_path, 'rb') as archive_file:
                 file_bytes = archive_file.read()
@@ -107,7 +118,7 @@ class PushCommand(BaseCommand):
                 commits_archives_bytes.extend(file_bytes)
 
         memory_map = {'logs': len(commits_logs_bytes), 'commits': list()}
-        for k, v in archives_lengths:
+        for k, v in archives_lengths.items():
             memory_map['commits'].append({k: v})
 
         memory_map_bytes = json.dumps(memory_map).encode('utf-8')
