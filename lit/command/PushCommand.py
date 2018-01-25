@@ -32,7 +32,7 @@ class PushCommand(BaseCommand):
             print('{0} value is not set'.format(RemoteStrings.ARG_NAME_CHOICE_URL))
             return False
 
-        if not settings_serializer.get_value('token'):
+        if not settings_serializer.get_value('user_token'):
             print('Run \'lit auth\' first')
             return False
 

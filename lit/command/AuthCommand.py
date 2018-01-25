@@ -25,13 +25,13 @@ class AuthCommand(BaseCommand):
         if not remote_url:
             print('Run \'lit remote set url\' command first')
             return False
-        print('Authorization for remote {0}'.format(AuthSettings.URL))
+        print('Authorization for remote {0}'.format(remote_url))
         username = input('Enter login: ')
         password = input('Enter password: ')
 
         payload = {'username': username, 'password': password}
 
-        response = requests.post(url=AuthSettings.URL, json=payload)
+        response = requests.post(url=remote_url, json=payload)
 
         if response.status_code == 400:
             print('Error', end='')

@@ -173,8 +173,8 @@ class PushStrings(object):
 
 
 class PushSettings(object):
-    ENDPOINT_1 = 'http://localhost:7000'
-    ENDPOINT_2 = 'http://localhost:7000'
+    ENDPOINT_1 = 'http://localhost:8000/api/v1/repositories/1/push_check_commits/'
+    ENDPOINT_2 = 'http://localhost:8000/api/v1/repositories/1/push_add_commits/'
 
 
 class RemoteStrings(object):
