@@ -173,7 +173,8 @@ class PushStrings(object):
 
 
 class PushSettings(object):
-    ENDPOINT = 'http://localhost:7000'
+    ENDPOINT_1 = 'http://localhost:7000'
+    ENDPOINT_2 = 'http://localhost:7000'
 
 
 class RemoteStrings(object):
