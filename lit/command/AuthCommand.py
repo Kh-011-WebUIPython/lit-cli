@@ -42,8 +42,15 @@ class AuthCommand(BaseCommand):
                 print()
             return False
         elif response.status_code == requests.codes.ok:
-            print('OK')
-            return True
+            response_json = response.json()
+            if 'key' in response_json:
+                user_token = response_json['key']
+                settings_serializer.set_value('user_token', user_token)
+                print('OK')
+                return True
+            else:
+                print('\'token\' key not found')
+                return False
         else:
             return False
         # print(str(response) + os.linesep + response.text)

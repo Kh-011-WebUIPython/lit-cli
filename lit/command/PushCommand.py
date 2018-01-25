@@ -17,6 +17,7 @@ class PushCommand(BaseCommand):
         help_message = PushStrings.HELP
         arguments = []
         super().__init__(name, help_message, arguments)
+        self.user_token = ''
 
     def run(self, **kwargs):
         if not super().run():
@@ -30,6 +31,12 @@ class PushCommand(BaseCommand):
         if not remote_url:
             print('{0} value is not set'.format(RemoteStrings.ARG_NAME_CHOICE_URL))
             return False
+
+        if not settings_serializer.get_value('token'):
+            print('Run \'lit auth\' first')
+            return False
+
+        self.user_token = settings_serializer.get_value('user_token')
 
         # get current branch name
         current_branch_name = util.get_current_branch_name()
@@ -60,7 +67,10 @@ class PushCommand(BaseCommand):
             commit_hash = commit[CommitSettings.LONG_HASH_KEY]
             commits_hashes.append(commit_hash)
         json_data = json.dumps({'branch_name': branch_name, 'commits_hashes': commits_hashes})
-        request = requests.post(url=PushSettings.ENDPOINT_1, json=json_data)
+        request = requests.post(
+            url=PushSettings.ENDPOINT_1,
+            json=json_data,
+            headers={'Authentication': 'Token ' + self.user_token})
         if request.status_code != requests.codes.ok:
             return [], ''
         try:
@@ -82,8 +92,11 @@ class PushCommand(BaseCommand):
         encoded_package = base64.b64encode(packed_commits).decode('utf-8')
         body = {'session_token': session_token, 'branch_name': branch_name, 'data': encoded_package}
         json_data = json.dumps(body)
-        request = requests.post(url=PushSettings.ENDPOINT_2, json=json_data)
-        return True if request.status_code == requests.codes.ok else False
+        request = requests.post(
+            url=PushSettings.ENDPOINT_2,
+            json=json_data,
+            headers={'Authentication': 'Token ' + self.user_token})
+        return request.status_code == requests.codes.ok
 
     def pack_commits(self, commits_hashes, commits_logs):
         """
