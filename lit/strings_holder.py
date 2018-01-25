@@ -35,6 +35,16 @@ class AddStrings(object):
     ARG_PATH_HELP = 'path to file'
 
 
+class AuthStrings(object):
+    NAME = 'auth'
+    HELP = 'authorization on remote server'
+
+
+class AuthSettings(object):
+    URL = 'http://litvcs.win:8080/api/v1/auth/login/'
+    # URL = 'http://localhost:7000/'
+    # URL = 'https://requestb.in/1g271801'
+
 class BranchStrings(object):
     NAME = 'branch'
     HELP = 'manage branch'

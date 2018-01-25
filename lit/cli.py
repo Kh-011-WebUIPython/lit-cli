@@ -3,6 +3,7 @@
 import sys
 import argparse
 from lit.command.AddCommand import AddCommand
+from lit.command.AuthCommand import AuthCommand
 from lit.command.BranchCommand import BranchCommand
 from lit.command.CheckoutCommand import CheckoutCommand
 from lit.command.CommitCommand import CommitCommand
@@ -43,6 +44,7 @@ def main_run(commands):
 def main():
     commands = [
         AddCommand(),
+        AuthCommand(),
         BranchCommand(),
         CheckoutCommand(),
         CommitCommand(),

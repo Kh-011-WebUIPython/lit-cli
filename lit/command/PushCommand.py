@@ -35,7 +35,8 @@ class PushCommand(BaseCommand):
         current_branch_name = util.get_current_branch_name()
 
         branch_log_file_path = util.get_branch_log_file_path(current_branch_name)
-        current_branch_commits = JSONSerializer(branch_log_file_path).get_all_from_list_item(LogSettings.COMMITS_LIST_KEY)
+        current_branch_commits = JSONSerializer(branch_log_file_path).get_all_from_list_item(
+            LogSettings.COMMITS_LIST_KEY)
 
         # obtain list of necessary commits to send, get session token
         commits_hashes_to_send, session_token = self.send_available_branch_commits_hashes(
@@ -51,7 +52,7 @@ class PushCommand(BaseCommand):
         packed_commits_to_send = self.pack_commits(commits_hashes_to_send, commits_logs_to_send)
 
         # send packed commits using previous session token
-        return self.send_commits(packed_commits_to_send, session_token)
+        return self.send_commits(packed_commits_to_send, session_token, current_branch_name)
 
     def send_available_branch_commits_hashes(self, branch_name, branch_commits):
         commits_hashes = []
@@ -77,9 +78,9 @@ class PushCommand(BaseCommand):
                 commits_logs.append(commit)
         return commits_logs
 
-    def send_commits(self, packed_commits, session_token):
+    def send_commits(self, packed_commits, session_token, branch_name):
         encoded_package = base64.b64encode(packed_commits).decode('utf-8')
-        body = {'session_token': session_token, 'data': encoded_package}
+        body = {'session_token': session_token, 'branch_name': branch_name, 'data': encoded_package}
         json_data = json.dumps(body)
         request = requests.post(url=PushSettings.ENDPOINT, json=json_data)
         return True if request.status_code == requests.codes.ok else False
