@@ -66,10 +66,10 @@ class PushCommand(BaseCommand):
         for commit in branch_commits:
             commit_hash = commit[CommitSettings.LONG_HASH_KEY]
             commits_hashes.append(commit_hash)
-        json_data = json.dumps({'branch_name': branch_name, 'commits_hashes': commits_hashes})
+        data = {'branch_name': branch_name, 'commits_hashes': commits_hashes}
         request = requests.post(
             url=PushSettings.ENDPOINT_1,
-            json=json_data,
+            json=data,
             headers={'Authentication': 'Token ' + self.user_token})
         if request.status_code != requests.codes.ok:
             return [], ''
