@@ -72,13 +72,16 @@ class PushCommand(BaseCommand):
             json=data,
             headers={'Authentication': 'Token ' + self.user_token})
         if request.status_code != requests.codes.ok:
+            print('Error status code')
             return [], ''
         try:
             response_json = request.json()
-            commits_hashes_to_send = response_json['commits_hashes']
+            commits_hashes_to_send = response_json['commits']
             session_token = response_json['session_token']
         except:
+            print('Failed to parse response json')
             return [], ''
+
         return commits_hashes_to_send, session_token
 
     def get_logs_by_commits_hashes(self, commits_hashes, commits):
@@ -96,6 +99,7 @@ class PushCommand(BaseCommand):
             url=PushSettings.ENDPOINT_2,
             json=json_data,
             headers={'Authentication': 'Token ' + self.user_token})
+        print('Commits data sent')
         return request.status_code == requests.codes.ok
 
     def pack_commits(self, commits_hashes, commits_logs):
