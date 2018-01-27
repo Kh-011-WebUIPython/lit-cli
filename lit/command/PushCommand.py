@@ -17,7 +17,9 @@ class PushCommand(BaseCommand):
         help_message = PushStrings.HELP
         arguments = []
         super().__init__(name, help_message, arguments)
-        self.user_token = ''
+        self.user_token = None
+        self.endpoint_1 = None
+        self.endpoint_2 = None
 
     def run(self, **kwargs):
         if not super().run():
@@ -29,14 +31,24 @@ class PushCommand(BaseCommand):
         remote_url = settings_serializer.get_value(RemoteStrings.ARG_NAME_CHOICE_URL)
 
         if not remote_url:
-            print('{0} value is not set'.format(RemoteStrings.ARG_NAME_CHOICE_URL))
+            print('Run \'lit remote set {0}\' first'.format(RemoteStrings.ARG_NAME_CHOICE_URL))
             return False
 
-        if not settings_serializer.get_value('user_token'):
+        remote_repo_id = settings_serializer.get_value(RemoteStrings.ARG_NAME_CHOICE_REPO_ID)
+
+        if not remote_repo_id:
+            print('Run \'lit remote set {0}\' first'.format(RemoteStrings.ARG_NAME_CHOICE_REPO_ID))
+            return False
+
+        self.endpoint_1 = os.path.join(remote_url, PushSettings.ENDPOINT_SUFFIX_1_FMT.format(remote_repo_id))
+        self.endpoint_2 = os.path.join(remote_url, PushSettings.ENDPOINT_SUFFIX_2_FMT.format(remote_repo_id))
+
+        self.user_token = settings_serializer.get_value('user_token')
+
+        if not self.user_token:
             print('Run \'lit auth\' first')
             return False
 
-        self.user_token = settings_serializer.get_value('user_token')
 
         # get current branch name
         current_branch_name = util.get_current_branch_name()
@@ -50,7 +62,7 @@ class PushCommand(BaseCommand):
             current_branch_name, current_branch_commits)
 
         if not session_token:
-            print('Bad server response')
+            print('Failed to get session token from server')
             return False
 
         commits_logs_to_send = self.get_logs_by_commits_hashes(commits_hashes_to_send, current_branch_commits)
@@ -68,7 +80,7 @@ class PushCommand(BaseCommand):
             commits_hashes.append(commit_hash)
         data = {'branch_name': branch_name, 'commits_hashes': commits_hashes}
         request = requests.post(
-            url=PushSettings.ENDPOINT_1,
+            url=self.endpoint_1,
             json=data,
             headers={'Authentication': 'Token ' + self.user_token})
         if request.status_code != requests.codes.ok:
@@ -93,7 +105,7 @@ class PushCommand(BaseCommand):
         body = {'session_token': session_token, 'branch_name': branch_name, 'data': encoded_package}
         json_data = json.dumps(body)
         request = requests.post(
-            url=PushSettings.ENDPOINT_2,
+            url=self.endpoint_2,
             json=json_data,
             headers={'Authentication': 'Token ' + self.user_token})
         return request.status_code == requests.codes.ok

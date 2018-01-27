@@ -41,9 +41,11 @@ class AuthStrings(object):
 
 
 class AuthSettings(object):
-    URL = 'http://litvcs.win:8080/api/v1/auth/login/'
+    # URL = 'http://litvcs.win:8080/api/v1/auth/login/'
+    ENDPOINT_SUFFIX = 'api/v1/auth/login/'
     # URL = 'http://localhost:7000/'
     # URL = 'https://requestb.in/1g271801'
+
 
 class BranchStrings(object):
     NAME = 'branch'
@@ -167,14 +169,23 @@ class LogSettings(object):
                      '   ' + '{0: <8}'.format(COMMIT_DATE_STR_NAME) + ' {4}'
 
 
+class PullStrings(object):
+    NAME = 'pull'
+    HELP = 'pulls commits from remote server'
+
+
+class PullSettings(object):
+    ENDPOINT_SUFFIX_FMT = 'api/v1/repositories/{0}/pull/'
+
+
 class PushStrings(object):
     NAME = 'push'
     HELP = 'pushes commits to remote server'
 
 
 class PushSettings(object):
-    ENDPOINT_1 = 'http://localhost:8000/api/v1/repositories/1/push_check_commits/'
-    ENDPOINT_2 = 'http://localhost:8000/api/v1/repositories/1/push_add_commits/'
+    ENDPOINT_SUFFIX_1_FMT = 'api/v1/repositories/{0}/push_check_commits/'
+    ENDPOINT_SUFFIX_2_FMT = 'api/v1/repositories/{0}/push_add_commits/'
 
 
 class RemoteStrings(object):
@@ -189,6 +200,7 @@ class RemoteStrings(object):
     ARG_NAME_NAME = 'name'
     ARG_NAME_HELP = 'remote server setting'
     ARG_NAME_CHOICE_URL = 'url'
+    ARG_NAME_CHOICE_REPO_ID = 'rid'
 
 
 class RmStrings(object):

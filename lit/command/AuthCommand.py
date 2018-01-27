@@ -25,6 +25,7 @@ class AuthCommand(BaseCommand):
         if not remote_url:
             print('Run \'lit remote set url\' command first')
             return False
+        remote_url = os.path.join(remote_url, AuthSettings.ENDPOINT_SUFFIX)
         print('Authorization for remote {0}'.format(remote_url))
         username = input('Enter login: ')
         password = input('Enter password: ')

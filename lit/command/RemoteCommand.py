@@ -35,6 +35,7 @@ class RemoteCommand(BaseCommand):
                 help=RemoteStrings.ARG_NAME_HELP,
                 choices=(
                     RemoteStrings.ARG_NAME_CHOICE_URL,
+                    RemoteStrings.ARG_NAME_CHOICE_REPO_ID,
                 )
             ),
         ]
@@ -66,10 +67,21 @@ class RemoteCommand(BaseCommand):
             if setting_name == RemoteStrings.ARG_NAME_CHOICE_URL and not self.validate_url(new_value):
                 print('{0} value is invalid'.format(RemoteStrings.ARG_NAME_CHOICE_URL))
                 return False
+            elif setting_name == RemoteStrings.ARG_NAME_CHOICE_REPO_ID and not self.validate_repo_id(new_value):
+                print('{0} value is invalid'.format(RemoteStrings.ARG_NAME_CHOICE_REPO_ID))
+                return False
             settings_serializer.set_value(setting_name, new_value)
             return True
         else:
             return False
 
     def validate_url(self, url):
-        return False if self.regex.match(url) is None else True
+        return self.regex.match(url) is not None
+
+    @staticmethod
+    def validate_repo_id(repo_id):
+        try:
+            int(repo_id)
+        except ValueError:
+            return False
+        return True
