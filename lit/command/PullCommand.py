@@ -64,7 +64,7 @@ class PullCommand(BaseCommand):
             json=json_data,
             headers={'Authentication': 'Token ' + self.user_token})
         if request.status_code != requests.codes.ok:
-            print('Error' + os.linesep + request.content)
+            print('Error' + os.linesep + str(request.content))
             return False
         try:
             response_json = request.json()
