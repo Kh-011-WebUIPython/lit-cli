@@ -47,7 +47,7 @@ class AuthCommand(BaseCommand):
             if 'key' in response_json:
                 user_token = response_json['key']
                 settings_serializer.set_value('user_token', user_token)
-                print('OK')
+                print('OK' + user_token)
                 return True
             else:
                 print('\'token\' key not found')

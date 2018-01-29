@@ -58,7 +58,7 @@ class PullCommand(BaseCommand):
         for commit in current_branch_commits:
             commit_hash = commit[CommitSettings.LONG_HASH_KEY]
             commits_hashes.append(commit_hash)
-        json_data = {'branch_name': current_branch_name, 'commits_hashes': commits_hashes}
+        json_data = {'branch_name': current_branch_name, 'commits_hashes': commits_hashes, 'repo_id': remote_repo_id}
         request = requests.post(
             url=self.endpoint,
             json=json_data,
@@ -67,8 +67,7 @@ class PullCommand(BaseCommand):
             print('Error' + os.linesep + str(request.content))
             return False
         try:
-            response_json = request.json()
-            response_data = response_json['data']
+            response_data = request.content
         except:
             print('Failed to get json from response')
             return False
@@ -109,7 +108,8 @@ class PullCommand(BaseCommand):
             pmm = json.loads(data[8:8 + pmm_len].decode('utf-8'))
             logs_len = pmm['logs']
             commits_hashes_and_len = pmm['commits']
-
+            print('logs len: {0}'.format(logs_len))
+            print('number of archives: {0}'.format(len(commits_hashes_and_len)))
             commits_logs = json.loads(data[8 + pmm_len: 8 + pmm_len + logs_len].decode('utf-8'))
         except json.decoder.JSONDecodeError:
             print('Failed to parse json')
